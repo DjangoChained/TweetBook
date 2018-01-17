@@ -4,6 +4,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>tweetbook.Human</class>
     <class>tweetbook.Activity</class>
+    <class>tweetbook.Post</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:db.sqlite3"/>
