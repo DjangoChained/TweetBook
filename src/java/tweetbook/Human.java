@@ -17,10 +17,12 @@
 package tweetbook;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import org.apache.commons.lang3.text.WordUtils;
 
 /**
@@ -30,11 +32,15 @@ import org.apache.commons.lang3.text.WordUtils;
 @Entity
 public class Human implements Serializable {
 
+    @OneToMany(mappedBy = "author")
+    private List<Activity> activities;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String firstName, lastName, email, username;
+    private ActivityVisibility activityVisibility;
 
     public Long getId() {
         return id;
@@ -74,6 +80,14 @@ public class Human implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public ActivityVisibility getActivityVisibility() {
+        return activityVisibility;
+    }
+
+    public void setActivityVisibility(ActivityVisibility activityVisibility) {
+        this.activityVisibility = activityVisibility;
     }
 
     @Override
