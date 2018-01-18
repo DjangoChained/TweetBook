@@ -39,7 +39,7 @@ public class Human implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String firstName, lastName, email, username;
+    private String firstName, lastName, email, username, password;
     private ActivityVisibility activityVisibility;
 
     public Long getId() {
@@ -82,6 +82,14 @@ public class Human implements Serializable {
         this.username = username;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public boolean checkPassword(String attempt) {
+        return attempt.equals(this.password);
+    }
+    
     public ActivityVisibility getActivityVisibility() {
         return activityVisibility;
     }
