@@ -7,8 +7,13 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
+<<<<<<< HEAD
 <project name="TweetLivre" default="default" basedir=".">
     <description>Builds, tests, and runs the project TweetLivre.</description>
+=======
+<project name="TweetBook" default="default" basedir=".">
+    <description>Builds, tests, and runs the project TweetBook.</description>
+>>>>>>> a4d09745b797f29225155363ed0ce259fd04fa93
     <import file="nbproject/build-impl.xml"/>
     <!--
 
