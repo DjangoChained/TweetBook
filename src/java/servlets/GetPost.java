@@ -26,8 +26,8 @@ import static servlets.Test.CONF_DAO_FACTORY;
  *
  * @author pierant
  */
-@WebServlet(name = "Post", urlPatterns = {"/Post"})
-public class Post extends HttpServlet {
+@WebServlet(name = "Post", urlPatterns = {"/post"})
+public class GetPost extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -73,7 +73,7 @@ public class Post extends HttpServlet {
             } catch(NumberFormatException e){
                 out.println("{\n" +
 "    \"status\": \"error\",\n" +
-"    \"message\": \"Il n'existe aucun post avec cet id\"\n" +
+"    \"message\": \"identifiant de publication invalide\"\n" +
 "}");
             }
             if (postId != -1){
@@ -98,6 +98,11 @@ public class Post extends HttpServlet {
                         "    \"title\": \"/"+linkpost.getTitle()+"\"\n" +
                         "    }\n" +
                         "}");
+                    } else {
+                        out.println("{\n" +
+"    \"status\": \"error\",\n" +
+"    \"message\": \"Il n'existe aucun post avec cet id\"\n" +
+"}");
                     }
             }
         }

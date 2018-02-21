@@ -76,6 +76,12 @@ public final class ConnectionForm {
             throw new Exception( "Merci de saisir votre mot de passe." );
         }
     }
+    
+    private void passwordVerification(String password) throws Exception {
+        if(password != null) {
+            
+        }
+    }
 
     /*
      * Ajoute un message correspondant au champ spécifié à la map des erreurs.
