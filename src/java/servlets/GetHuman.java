@@ -1,0 +1,118 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package servlets;
+
+import beans.Human;
+import dao.DAOFactory;
+import dao.HumanDao;
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author pierant
+ */
+@WebServlet(name = "getHuman", urlPatterns = {"/user"})
+public class GetHuman extends HttpServlet {
+
+    public static final String CONF_DAO_FACTORY = "daofactory";
+    
+    private HumanDao humanDao;
+    
+    public void init() throws ServletException {
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+    }
+    
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        try (PrintWriter out = response.getWriter()) {
+            int humanId = -1;
+            
+            try {
+               humanId = Integer.parseInt(request.getParameter("id"));
+            } catch(NumberFormatException e){
+                out.println("{\n" +
+"    \"status\": \"error\",\n" +
+"    \"message\": \"identifiant de publication invalide\"\n" +
+"}");
+            }
+            
+            if (humanId != -1){
+                Human human = humanDao.get(humanId);
+                if(human != null){
+                    out.println("{\n" +
+                                "    \"status\": \"success\",\n" +
+                                "    \"user\": {\n" +
+                            "        \"id\": \""+human.getId()+"\",\n" +
+                            "        \"firstName\": \""+human.getFirstName()+"\",\n" +
+                            "        \"lastName\": \""+human.getLastName()+"\"\n" +
+                            "    }\n" +
+                            "}");
+                } else {
+                out.println("{\n" +
+"    \"status\": \"error\",\n" +
+"    \"message\": \"Il n'existe aucun utilisateur avec cet id\"\n" +
+"}");
+                }
+            } 
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}
