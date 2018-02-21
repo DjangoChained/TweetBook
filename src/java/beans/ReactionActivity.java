@@ -1,6 +1,6 @@
 package beans;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,7 +19,7 @@ public class ReactionActivity extends Activity{
     
     public ReactionActivity(){}
     
-    public ReactionActivity(int id, LocalDate date, int id_human, Reaction reaction, int id_post){
+    public ReactionActivity(int id, LocalDateTime date, int id_human, Reaction reaction, int id_post){
         super(id, date, id_human);
         this.reaction = reaction;
         this.id_post = id_post;

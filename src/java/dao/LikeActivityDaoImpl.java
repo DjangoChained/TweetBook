@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
     private static LikeActivity map( ResultSet resultSet ) throws SQLException {
         LikeActivity activity = new LikeActivity();
         activity.setId(resultSet.getInt( "id"));
-        activity.setDate(resultSet.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        activity.setDate(resultSet.getTimestamp("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         activity.setId_human(resultSet.getInt("id_human"));
         activity.setReaction(Reaction.LIKE);
         activity.setId_post(resultSet.getInt("id_post"));
@@ -50,7 +51,7 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, activity.getDate(), activity.getId_human(), activity.getReaction(), activity.getId_post());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(activity.getDate()), activity.getId_human(), activity.getReaction(), activity.getId_post());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création de l'activité, aucune ligne ajoutée dans la table." );

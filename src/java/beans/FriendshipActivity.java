@@ -1,6 +1,6 @@
 package beans;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -8,7 +8,7 @@ import java.time.LocalDate;
  */
 public class FriendshipActivity extends Activity {
      
-    public FriendshipActivity(int id, LocalDate date, int id_human){
+    public FriendshipActivity(int id, LocalDateTime date, int id_human){
         super(id, date, id_human);
     }
 

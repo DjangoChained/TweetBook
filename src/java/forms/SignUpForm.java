@@ -12,7 +12,7 @@ import dao.HumanDao;
 import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,15 +140,15 @@ public final class SignUpForm {
     }
     
     private void birthdateProcess(String date, Human human) {
-        LocalDate localDate = null;
+        LocalDateTime LocalDateTime = null;
         try {
             birthdateValidation(date);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            localDate = localDate.parse(date, formatter);
+            LocalDateTime = LocalDateTime.parse(date, formatter);
         } catch (Exception e) {
             setError(BIRTHDATE_FIELD, e.getMessage());
         }
-        human.setBirthDate(localDate);
+        human.setBirthDate(LocalDateTime);
     }
     
     /*

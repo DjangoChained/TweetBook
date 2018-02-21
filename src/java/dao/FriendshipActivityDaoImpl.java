@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
     private static FriendshipActivity map( ResultSet resultSet ) throws SQLException {
         FriendshipActivity activity = new FriendshipActivity();
         activity.setId(resultSet.getInt( "id"));
-        activity.setDate(resultSet.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        activity.setDate(resultSet.getTimestamp("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         activity.setId_human(resultSet.getInt("id_human"));
         
         return activity;
@@ -47,7 +48,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, activity.getDate(), activity.getId_human());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(activity.getDate()), activity.getId_human());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création de l'activité, aucune ligne ajoutée dans la table." );

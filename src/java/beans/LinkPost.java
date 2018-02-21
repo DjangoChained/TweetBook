@@ -1,7 +1,7 @@
 package beans;
 
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,7 +20,7 @@ public class LinkPost extends Post {
     
     public LinkPost(){}
     
-    public LinkPost(int id, LocalDate date, int id_human, String content, String url, String title){
+    public LinkPost(int id, LocalDateTime date, int id_human, String content, String url, String title){
         super(id, date, id_human, content) ;
         this.url = url;
         this.title = title;
