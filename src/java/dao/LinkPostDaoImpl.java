@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
     private static LinkPost map( ResultSet resultSet ) throws SQLException {
         LinkPost post = new LinkPost();
         post.setId(resultSet.getInt( "id"));
-        post.setDate(resultSet.getDate("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        post.setDate(resultSet.getTimestamp("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         post.setId_human(resultSet.getInt("id_human"));
         post.setContent(resultSet.getString("content"));
         post.setUrl(resultSet.getString("url"));
@@ -50,7 +51,7 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, post.getDate(), post.getId_human(), post.getContent(), post.getUrl(), post.getTitle());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent(), post.getUrl(), post.getTitle());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );

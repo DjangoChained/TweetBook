@@ -1,6 +1,7 @@
 package beans;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -9,12 +10,12 @@ import java.util.Date;
  */
 public abstract class Activity {
     private int id;
-    private LocalDate date;
+    private LocalDateTime date;
     private int id_human;
     
     public Activity(){}
     
-    public Activity(int id, LocalDate date, int id_human) {
+    public Activity(int id, LocalDateTime date, int id_human) {
         this.id = id;
         this.date = date;
         this.id_human = id_human;
@@ -28,11 +29,11 @@ public abstract class Activity {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
     

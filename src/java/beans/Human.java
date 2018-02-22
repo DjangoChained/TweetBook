@@ -2,7 +2,7 @@ package beans;
 
 
 import java.util.ArrayList;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,13 +18,13 @@ public class Human {
     private int id;
     private String lastname;
     private String firstname;
-    private LocalDate birthDate;
+    private LocalDateTime birthDate;
     private String email;
     private String username;
     private String password;
     private ActivityVisibility visibility;
     
-    public Human(int id, String lastname, String firstname, LocalDate birthDate, String email, String username, ActivityVisibility visibility) {
+    public Human(int id, String lastname, String firstname, LocalDateTime birthDate, String email, String username, ActivityVisibility visibility) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -60,11 +60,11 @@ public class Human {
         this.firstname = firstname;
     }
 
-    public LocalDate getBirthDate() {
+    public LocalDateTime getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(LocalDateTime birthDate) {
         this.birthDate = birthDate;
     }
 

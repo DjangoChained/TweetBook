@@ -9,23 +9,34 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.Human;
+import config.BCrypt;
+import dao.DAOFactory;
+import dao.HumanDao;
 import forms.ConnectionForm;
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(name = "Connection", urlPatterns = {"/Connection"})
+@WebServlet(name = "Connection", urlPatterns = {"/login"})
 public class Connection extends HttpServlet {
     public static final String ATT_USER         = "human";
     public static final String ATT_FORM         = "form";
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String VIEW              = "/WEB-INF/connexion.jsp";
+    public static final String CONF_DAO_FACTORY = "daofactory";
+    
+    private HumanDao humanDao;
+    
+    public void init() throws ServletException {
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+    }
 
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        /* Affichage de la page de connexion */
         this.getServletContext().getRequestDispatcher(VIEW ).forward( request, response );
     }
 
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Préparation de l'objet formulaire */
+        Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        log("voilà dans post : "+hu);
         ConnectionForm form = new ConnectionForm();
 
         /* Traitement de la requête et récupération du bean en résultant */
@@ -38,10 +49,22 @@ public class Connection extends HttpServlet {
          * Si aucune erreur de validation n'a eu lieu, alors ajout du bean
          * Human à la session, sinon suppression du bean de la session.
          */
+        session.setAttribute( ATT_SESSION_USER, null );
         if ( form.getErrors().isEmpty() ) {
-            session.setAttribute( ATT_SESSION_USER, human );
-        } else {
-            session.setAttribute( ATT_SESSION_USER, null );
+            String email = request.getParameter("email");
+            String pwd = request.getParameter("password");
+            if ( email != null && email.trim().length() != 0 && pwd != null && pwd.trim().length() != 0) {
+                Human testHuman = humanDao.get(email);
+                if(testHuman != null){
+                    if(BCrypt.checkpw(pwd, testHuman.getPassword())){
+                        session.setAttribute( ATT_SESSION_USER, human );
+                    } else {
+                        // mdp incorrect
+                    }
+                } else {
+                    // email n'existe pas
+                }
+            }
         }
 
         /* Stockage du formulaire et du bean dans l'objet request */

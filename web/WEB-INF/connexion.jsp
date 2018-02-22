@@ -8,7 +8,7 @@
         <link type="text/css" rel="stylesheet" href="form.css" />
     </head>
     <body>
-        <form method="post" action="connection">
+        <form method="post" action="login">
             <fieldset>
                 <legend>Connexion</legend>
                 <p>Vous pouvez vous connecter via ce formulaire.</p>
@@ -23,10 +23,13 @@
                 <span class="erreur">${form.errors['password']}</span>
                 <br />
 
-                <input type="submit" value="Connection" class="sansLabel" />
+                <input type="submit" value="login" class="sansLabel" />
                 <br />
                 
                 <p class="${empty form.errors ? 'succes' : 'erreur'}">${form.result}</p>
+                 <c:if test="${!empty sessionScope.sessionUtilisateur}">
+                    <p class="succes">Vous êtes connecté(e) avec l'adresse : ${sessionScope.sessionHuman.email}</p>
+                </c:if>
             </fieldset>
         </form>
     </body>

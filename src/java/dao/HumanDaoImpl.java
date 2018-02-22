@@ -12,8 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.ZoneId;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -31,7 +32,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         human.setId( result.getInt( "id" ) );
         human.setLastName( result.getString( "lastname" ) );
         human.setFirstName( result.getString( "firstname" ) );
-        human.setBirthDate( result.getDate( "birthdate" ).toLocalDate());
+        human.setBirthDate( result.getTimestamp("birthdate").toLocalDateTime());
         human.setEmail( result.getString( "email" ) );
         human.setUsername( result.getString( "username" ) );
         human.setPassword( result.getString( "password" ) );  
@@ -49,7 +50,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), human.getBirthDate(),
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), Timestamp.valueOf(human.getBirthDate()),
                                                                human.getEmail(), human.getUsername(), human.getPassword());
             int status = preparedStatement.executeUpdate();
             /* Analyse du statut retourné par la requête d'insertion */
