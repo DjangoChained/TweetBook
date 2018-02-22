@@ -8,7 +8,7 @@
         <link type="text/css" rel="stylesheet" href="form.css" />
     </head>
     <body>
-        <form method="post" action="Signup">
+        <form method="post" action="register">
             <fieldset>
                 <legend>Inscription</legend>
                 <p>Vous pouvez vous inscrire via ce formulaire.</p>
@@ -48,7 +48,7 @@
                 <span class="erreur">${form.errors['username']}</span>
                 <br />
 
-                <input type="submit" value="Signup" class="sansLabel" />
+                <input type="submit" value="register" class="sansLabel" />
                 <br />
                 
                 <p class="${empty form.errors ? 'succes' : 'erreur'}">${form.result}</p>

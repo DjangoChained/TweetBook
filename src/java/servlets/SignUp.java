@@ -13,7 +13,7 @@ import dao.HumanDao;
 import forms.SignUpForm;
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(name = "SignUp", urlPatterns = {"/Signup"})
+@WebServlet(name = "SignUp", urlPatterns = {"/register"})
 public class SignUp extends HttpServlet {
     public static final String CONF_DAO_FACTORY = "daofactory";
     public static final String USER_ATT = "human";

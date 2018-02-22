@@ -57,7 +57,7 @@ public class Connection extends HttpServlet {
                 Human testHuman = humanDao.get(email);
                 if(testHuman != null){
                     if(BCrypt.checkpw(pwd, testHuman.getPassword())){
-                        session.setAttribute( ATT_SESSION_USER, human );
+                        session.setAttribute( ATT_SESSION_USER, testHuman );
                     } else {
                         // mdp incorrect
                     }
