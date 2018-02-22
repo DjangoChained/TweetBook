@@ -12,6 +12,7 @@ import dao.HumanDao;
 import java.text.ParseException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -112,12 +113,12 @@ public final class SignUpForm {
     
     
     private void birthdateValidation(String date) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setLenient(false);
         try {
             Date d = sdf.parse(date);
         } catch (ParseException e){
-            throw new Exception("La date doit être au format dd/mm/yyyy");
+            throw new Exception("La date doit être au format yyyy-MM-dd");
         }
     }
     
@@ -140,15 +141,20 @@ public final class SignUpForm {
     }
     
     private void birthdateProcess(String date, Human human) {
-        LocalDateTime LocalDateTime = null;
+        LocalDateTime res = null;
         try {
             birthdateValidation(date);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDateTime = LocalDateTime.parse(date, formatter);
+            //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            final DateTimeFormatter formatter;
+            formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            
+            LocalDateTime time;
+            res = LocalDateTime.from(LocalDate.parse(date, formatter).atStartOfDay());
+            //res = LocalDateTime.parse(date, formatter);
         } catch (Exception e) {
             setError(BIRTHDATE_FIELD, e.getMessage());
         }
-        human.setBirthDate(LocalDateTime);
+        human.setBirthDate(res);
     }
     
     /*

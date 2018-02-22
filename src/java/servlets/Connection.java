@@ -14,9 +14,8 @@ import dao.DAOFactory;
 import dao.HumanDao;
 import forms.ConnectionForm;
 import javax.servlet.annotation.WebServlet;
-import static servlets.GetHuman.CONF_DAO_FACTORY;
 
-@WebServlet(name = "Connection", urlPatterns = {"/Connection"})
+@WebServlet(name = "Connection", urlPatterns = {"/login"})
 public class Connection extends HttpServlet {
     public static final String ATT_USER         = "human";
     public static final String ATT_FORM         = "form";
@@ -31,12 +30,13 @@ public class Connection extends HttpServlet {
     }
 
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        /* Affichage de la page de connexion */
         this.getServletContext().getRequestDispatcher(VIEW ).forward( request, response );
     }
 
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Préparation de l'objet formulaire */
+        Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        log("voilà dans post : "+hu);
         ConnectionForm form = new ConnectionForm();
 
         /* Traitement de la requête et récupération du bean en résultant */
@@ -55,18 +55,14 @@ public class Connection extends HttpServlet {
             String pwd = request.getParameter("password");
             if ( email != null && email.trim().length() != 0 && pwd != null && pwd.trim().length() != 0) {
                 Human testHuman = humanDao.get(email);
-                if(BCrypt.checkpw(pwd, testHuman.getPassword())){
-                    session.setAttribute( ATT_SESSION_USER, human );
+                if(testHuman != null){
+                    if(BCrypt.checkpw(pwd, testHuman.getPassword())){
+                        session.setAttribute( ATT_SESSION_USER, human );
+                    } else {
+                        // mdp incorrect
+                    }
                 } else {
-                    /********************************************
-                     * 
-                     * 
-                     * 
-                     * 
-                     *   TO DO
-                     * 
-                     * 
-                     * ********************************************/
+                    // email n'existe pas
                 }
             }
         }
