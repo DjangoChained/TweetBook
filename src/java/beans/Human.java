@@ -1,8 +1,10 @@
 package beans;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,14 +26,14 @@ public class Human {
     private String password;
     private ActivityVisibility visibility;
     
-    public Human(int id, String lastname, String firstname, LocalDateTime birthDate, String email, String username, ActivityVisibility visibility) {
+    public Human(int id, String lastname, String firstname, LocalDateTime birthDate, String email, String username, String visibility) {
         this.id = id;
         this.lastname = lastname;
         this.firstname = firstname;
         this.birthDate = birthDate;
         this.email = email;
         this.username = username;
-        this.visibility = visibility;
+        this.visibility = ActivityVisibility.valueOf(visibility);
     }
     
     public Human(){}
@@ -67,6 +69,13 @@ public class Human {
     public void setBirthDate(LocalDateTime birthDate) {
         this.birthDate = birthDate;
     }
+    
+    public void setBirthDate(String birthdate) {
+        final DateTimeFormatter formatter;
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        this.birthDate = LocalDateTime.from(LocalDate.parse(birthdate, formatter).atStartOfDay());
+    }
 
     public String getEmail() {
         return email;
@@ -94,6 +103,10 @@ public class Human {
     
     public void setVisibility(ActivityVisibility visibility) {
         this.visibility = visibility;
+    }
+    
+    public void setVisibility(String visibility) {
+        this.visibility = ActivityVisibility.valueOf(visibility);
     }
 
     public ActivityVisibility getVisibility() {

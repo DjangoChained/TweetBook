@@ -6,8 +6,14 @@
 package servlets;
 
 import beans.Human;
+import com.google.gson.Gson;
+import dao.DAOException;
+import dao.DAOFactory;
+import dao.HumanDao;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +27,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "Settings", urlPatterns = {"/settings"})
 public class Settings extends HttpServlet {
     public static final String ATT_SESSION_USER = "sessionHuman";
+    public static final String CONF_DAO_FACTORY = "daofactory";
+    private HumanDao humanDao;
+    
+    public void init() throws ServletException {
+        /* Récupération d'une instance de notre DAO Utilisateur */
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -51,4 +64,34 @@ public class Settings extends HttpServlet {
                             "}");
         }
     }
+    
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+        response.setContentType("application/json");
+        
+        BufferedReader reader = request.getReader();
+        Gson gson = new Gson();
+
+        Properties data = gson.fromJson(reader, Properties.class);
+        
+        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        human.setFirstName(data.getProperty("lastname"));
+        human.setLastName(data.getProperty("lastname"));
+        human.setBirthDate(data.getProperty("birthdate"));
+        human.setUsername(data.getProperty("username"));
+        human.setEmail(data.getProperty("email"));
+        human.setVisibility(data.getProperty("visibility"));
+        
+        try {
+            humanDao.update(human);
+            try (PrintWriter out = response.getWriter()) {
+                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\")}");
+            }
+        } catch (DAOException e){
+            try (PrintWriter out = response.getWriter()) {
+                out.println("{\"status\": \"error\"}");
+            }
+        }
+  }
 }

@@ -5,6 +5,7 @@
  */
 package dao;
 
+import beans.ActivityVisibility;
 import static dao.DAOImpl.*;
 import beans.Human;
 import java.sql.Connection;
@@ -149,7 +150,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         return human;
     }
     
-    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, password = ? WHERE id = ?";
+    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, visibility = ? WHERE id = ?";
     @Override
     public void update(Human human) throws DAOException {
         Connection connexion = null;
@@ -159,8 +160,13 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
+            String visibility = "all";
+            if (human.getVisibility() == ActivityVisibility.AUTHOR)
+                visibility = "authoronly";
+            else if (human.getVisibility() == ActivityVisibility.FRIENDS)
+                visibility = "friends";
             preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
-                                                               human.getEmail(), human.getUsername(), human.getPassword(), human.getId());
+                                                               human.getEmail(), human.getUsername(), visibility, human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
