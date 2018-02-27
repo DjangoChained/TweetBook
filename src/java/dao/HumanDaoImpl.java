@@ -180,4 +180,22 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, SQL_DELETE);
     }
+    
+    private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
+    
+    public void updatePassword(Human human, String password) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE_PASSWORD, false, password, human.getId());
+            preparedStatement.executeUpdate();
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+    }
 }

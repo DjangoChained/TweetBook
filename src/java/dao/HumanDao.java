@@ -17,5 +17,7 @@ public interface HumanDao {
     
     void update(Human human) throws DAOException;
     
+    void updatePassword(Human human, String password) throws DAOException;
+    
     void delete(int id) throws DAOException;
 }
