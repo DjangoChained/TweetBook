@@ -41,17 +41,19 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return post;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO linkpost (date, id_human, content, url, title) VALUES (?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO linkpost (id, url, title) VALUES (?, ?, ?)";
     @Override
-    public LinkPost create(LinkPost post) throws IllegalArgumentException {
+    public LinkPost create(LinkPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
 
         try {
-            /* Récupération d'une connexion depuis la Factory */
+            int id_activity = super.createActivity(daoFactory, post.getDate(), post.getId_human());
+            super.createPost(daoFactory, id_activity, post.getContent());
+            
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent(), post.getUrl(), post.getTitle());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity, post.getUrl(), post.getTitle());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );
@@ -70,14 +72,14 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return post;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, url, title FROM linkpost";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id";
     @Override
-    public ArrayList<Post> getAll() throws DAOException {
+    public ArrayList<LinkPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
         LinkPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<LinkPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
@@ -96,7 +98,7 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, url, title FROM linkpost WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE id = ?";
     @Override
     public LinkPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -120,24 +122,22 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, url, title FROM linkpost WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE id_human = ?";
     @Override
-    public ArrayList<Post> getByHuman(int id_human) throws DAOException {
+    public ArrayList<LinkPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         LinkPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<LinkPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
-                if ( resultSet.next() ) {
-                    post = map( resultSet );
-                    posts.add(post);
-                }
+                post = map( resultSet );
+                posts.add(post);
             }
             
         } catch ( SQLException e ) {
@@ -149,7 +149,7 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return posts;
     }
 
-    private static final String SQL_UPDATE = "UPDATE linkpost SET date = ?, id_human = ?, content = ?, url = ?, title = ? WHERE id = ?";
+    private static final String SQL_UPDATE = "UPDATE linkpost SET url = ?, title = ? WHERE id = ?";
     @Override
     public void update(LinkPost post) throws DAOException {
         Connection connexion = null;
@@ -157,8 +157,10 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         ResultSet resultSet = null;
 
         try {
+            super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
+            super.updatePost(daoFactory, post.getId(), post.getContent());
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getDate(), post.getId_human(), post.getContent(), post.getUrl(), post.getTitle(), post.getId());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getUrl(), post.getTitle(), post.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
@@ -170,6 +172,8 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
     private static final String SQL_DELETE= "DELETE FROM linkpost WHERE id = ?";
     @Override
     public void delete(int id) throws DAOException {
+        super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
+        super.delete(daoFactory, id, "DELETE FROM post WHERE id = ");
         super.delete(daoFactory, id, SQL_DELETE);
     }
 }

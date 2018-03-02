@@ -16,9 +16,9 @@ import java.util.ArrayList;
 public interface LinkPostDao {
     LinkPost create(LinkPost post) throws DAOException;
     
-    ArrayList<Post> getAll() throws DAOException;
+    ArrayList<LinkPost> getAll() throws DAOException;
     LinkPost get(int id) throws DAOException;
-    ArrayList<Post> getByHuman(int id_human) throws DAOException;
+    ArrayList<LinkPost> getByHuman(int id_human) throws DAOException;
     
     void update(LinkPost post) throws DAOException;
     

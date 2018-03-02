@@ -42,7 +42,7 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
     
     private static final String SQL_INSERT = "INSERT INTO photopost (date, id_human, content, photopath) VALUES (?, ?, ?, ?)";
     @Override
-    public PhotoPost create(PhotoPost post) throws IllegalArgumentException {
+    public PhotoPost create(PhotoPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
@@ -71,12 +71,12 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
 
     private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost";
     @Override
-    public ArrayList<Post> getAll() throws DAOException {
+    public ArrayList<PhotoPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
         PhotoPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<PhotoPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
@@ -121,22 +121,20 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
     
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost WHERE id_human = ?";
     @Override
-    public ArrayList<Post> getByHuman(int id_human) throws DAOException {
+    public ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         PhotoPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<PhotoPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
-                if ( resultSet.next() ) {
-                    post = map( resultSet );
-                    posts.add(post);
-                }
+                post = map( resultSet );
+                posts.add(post);
             }
             
         } catch ( SQLException e ) {

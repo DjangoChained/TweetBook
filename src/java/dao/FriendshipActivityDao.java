@@ -5,7 +5,6 @@
  */
 package dao;
 
-import beans.Activity;
 import beans.FriendshipActivity;
 import java.util.ArrayList;
 
@@ -16,9 +15,9 @@ import java.util.ArrayList;
 public interface FriendshipActivityDao {
     FriendshipActivity create(FriendshipActivity post) throws DAOException;
     
-    ArrayList<Activity> getAll() throws DAOException;
+    ArrayList<FriendshipActivity> getAll() throws DAOException;
     FriendshipActivity get(int id) throws DAOException;
-    ArrayList<Activity> getByHuman(int id_human) throws DAOException;
+    ArrayList<FriendshipActivity> getByHuman(int id_human) throws DAOException;
     
     void delete(int id) throws DAOException;
 }

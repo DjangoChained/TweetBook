@@ -190,12 +190,6 @@ public final class SignUpForm {
             setError( PASS_FIELD, e.getMessage() );
             setError( CONF_FIELD, null );
         }
-        /*****************
-         * 
-         * 
-         *  https://www.bcrypt.fr/questions
-         * 
-         */
         human.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         }
 

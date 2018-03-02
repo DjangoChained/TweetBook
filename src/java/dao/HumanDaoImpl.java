@@ -43,7 +43,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     
     private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
     @Override
-    public void create(Human human) throws IllegalArgumentException {
+    public void create(Human human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
