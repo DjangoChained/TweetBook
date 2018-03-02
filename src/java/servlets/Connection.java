@@ -9,18 +9,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import beans.Human;
+import com.google.gson.Gson;
 import config.BCrypt;
 import dao.DAOFactory;
 import dao.HumanDao;
 import forms.ConnectionForm;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Properties;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Connection", urlPatterns = {"/login"})
 public class Connection extends HttpServlet {
-    public static final String ATT_USER         = "human";
-    public static final String ATT_FORM         = "form";
     public static final String ATT_SESSION_USER = "sessionHuman";
-    public static final String VIEW              = "/WEB-INF/connexion.jsp";
     public static final String CONF_DAO_FACTORY = "daofactory";
     
     private HumanDao humanDao;
@@ -29,20 +31,19 @@ public class Connection extends HttpServlet {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
 
-    public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        this.getServletContext().getRequestDispatcher(VIEW ).forward( request, response );
-    }
-
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        /* Préparation de l'objet formulaire */
-        Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
-        log("voilà dans post : "+hu);
+        
+        //Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        response.setContentType("application/json");
+        
+        BufferedReader reader = request.getReader();
+        Gson gson = new Gson();
+
+        Properties data = gson.fromJson(reader, Properties.class);
         ConnectionForm form = new ConnectionForm();
 
-        /* Traitement de la requête et récupération du bean en résultant */
-        Human human = form.connectHuman( request );
+        form.connectHuman(data, request);
 
-        /* Récupération de la session depuis la requête */
         HttpSession session = request.getSession();
 
         /**
@@ -50,27 +51,33 @@ public class Connection extends HttpServlet {
          * Human à la session, sinon suppression du bean de la session.
          */
         session.setAttribute( ATT_SESSION_USER, null );
+        PrintWriter out = response.getWriter();
         if ( form.getErrors().isEmpty() ) {
-            String email = request.getParameter("email");
-            String pwd = request.getParameter("password");
+            String email = data.getProperty("email");
+            String pwd = data.getProperty("password");
             if ( email != null && email.trim().length() != 0 && pwd != null && pwd.trim().length() != 0) {
                 Human testHuman = humanDao.get(email);
                 if(testHuman != null){
                     if(BCrypt.checkpw(pwd, testHuman.getPassword())){
                         session.setAttribute( ATT_SESSION_USER, testHuman );
+                        out.println("{\"status\": \"success\"}");
                     } else {
-                        // mdp incorrect
+                        out.print("{\"status\": \"error\"\n"
+                      + "\"message\": \"Email ou mot de passe incorrect\"");
                     }
                 } else {
-                    // email n'existe pas
+                    out.print("{\"status\": \"error\"\n"
+                      + "\"message\": \"Cet email n'appartient à aucun utilisateur.\"}");
                 }
             }
-        }
-
-        /* Stockage du formulaire et du bean dans l'objet request */
-        request.setAttribute( ATT_FORM, form );
-        request.setAttribute( ATT_USER, human );
-
-        this.getServletContext().getRequestDispatcher(VIEW ).forward( request, response );
+        } else {
+            out.print("{\"status\": \"error\"\n"
+                      + "\"message\": \"");
+            String message = "";
+            for (Map.Entry<String, String> entry : form.getErrors().entrySet()) {
+                message += entry.getValue()+"\n";
+            }
+            out.println(message+"\"}");
+        }         
     }
 }

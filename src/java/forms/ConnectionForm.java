@@ -6,13 +6,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import beans.Human;
+import java.util.Properties;
 
 public final class ConnectionForm {
     private static final String EMAIL_FIELD  = "email";
     private static final String PASS_FIELD   = "password";
 
     private String              result;
-    private Map<String, String> errors      = new HashMap<String, String>();
+    private Map<String, String> errors      = new HashMap<>();
 
     public String getResult() {
         return result;
@@ -22,14 +23,11 @@ public final class ConnectionForm {
         return errors;
     }
 
-    public Human connectHuman( HttpServletRequest request ) {
-        /* Récupération des champs du formulaire */
-        String email = getFieldValue( request, EMAIL_FIELD );
-        String password = getFieldValue( request, PASS_FIELD );
-
+    public Human connectHuman( Properties data, HttpServletRequest request ) {
+        String email = data.getProperty("email");
+        String password = data.getProperty("password");
         Human human = new Human();
 
-        /* Validation du champ email. */
         try {
             emailValidation( email );
         } catch ( Exception e ) {
@@ -37,20 +35,12 @@ public final class ConnectionForm {
         }
         human.setEmail( email );
 
-        /* Validation du champ mot de passe. */
         try {
             passwordValidation( password );
         } catch ( Exception e ) {
             setError( PASS_FIELD, e.getMessage() );
         }
         human.setPassword(password );
-
-        /* Initialisation du résultat global de la validation. */
-        if ( errors.isEmpty() ) {
-            result = "Succès de la connexion.";
-        } else {
-            result = "Échec de la connexion.";
-        }
 
         return human;
     }
@@ -59,8 +49,12 @@ public final class ConnectionForm {
      * Valide l'adresse email saisie.
      */
     private void emailValidation( String email ) throws Exception {
-        if ( email != null && !email.matches( "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)" ) ) {
-            throw new Exception( "Merci de saisir une adresse mail valide." );
+        if ( email != null) {
+            if(!email.matches( "([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)" ) ) {
+                throw new Exception( "Merci de saisir une adresse mail valide." );
+            }
+        } else {
+            throw new Exception( "Merci de saisir votre adresse mail." );
         }
     }
 
@@ -69,8 +63,8 @@ public final class ConnectionForm {
      */
     private void passwordValidation( String password ) throws Exception {
         if ( password != null ) {
-            if ( password.length() < 3 ) {
-                throw new Exception( "Le mot de passe doit contenir au moins 3 caractères." );
+            if ( password.length() < 6 ) {
+                throw new Exception( "Le mot de passe doit contenir au moins 6 caractères." );
             }
         } else {
             throw new Exception( "Merci de saisir votre mot de passe." );
@@ -82,18 +76,5 @@ public final class ConnectionForm {
      */
     private void setError( String field, String message ) {
         errors.put( field, message );
-    }
-
-    /*
-     * Méthode utilitaire qui retourne null si un champ est vide, et son contenu
-     * sinon.
-     */
-    private static String getFieldValue( HttpServletRequest request, String field ) {
-        String valeur = request.getParameter( field );
-        if ( valeur == null || valeur.trim().length() == 0 ) {
-            return null;
-        } else {
-            return valeur;
-        }
     }
 }
