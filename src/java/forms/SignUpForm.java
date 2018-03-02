@@ -17,8 +17,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public final class SignUpForm {
 
@@ -33,6 +35,7 @@ public final class SignUpForm {
     private String result;
     private final Map<String, String> errors = new HashMap<>();
     private HumanDao humanDao;
+    public static final String ATT_SESSION_USER = "sessionHuman";
     
     public SignUpForm(HumanDao humanDao) {
         this.humanDao = humanDao;
@@ -47,14 +50,15 @@ public final class SignUpForm {
     }
     
     
-    public Human SignUpHuman( HttpServletRequest request ) {
-        String firstname = getFieldValue( request, FIRSTNAME_FIELD );
-        String lastname = getFieldValue( request, LASTNAME_FIELD );
-        String birthdate = getFieldValue(request, BIRTHDATE_FIELD); 
-        String email = getFieldValue( request, EMAIL_FIELD );
-        String password = getFieldValue( request, PASS_FIELD );
-        String confirmation = getFieldValue( request, CONF_FIELD );
-        String username = getFieldValue( request, USERNAME_FIELD );
+    public Human SignUpHuman( Properties data, HttpServletRequest request ) {
+        HttpSession session = request.getSession();
+        
+        String firstname = data.getProperty("firstname");
+        String lastname = data.getProperty("lastname");
+        String birthdate = data.getProperty("birthdate");
+        String email = data.getProperty("email");
+        String password = data.getProperty("password");
+        String username = data.getProperty("username");
 
         Human human = new Human();
         
@@ -63,14 +67,14 @@ public final class SignUpForm {
         lastnameProcess(lastname, human);
         birthdateProcess(birthdate, human);
         emailProcess( email, human );
-        passwordProcess( password, confirmation, human );
+        passwordProcess( password, human );
         usernameProcess( username, human );
 
         if ( errors.isEmpty() ) {
-            humanDao.create(human );
-            result = "Succès de l'inscription.";
+            humanDao.create(human);
+            session.setAttribute( ATT_SESSION_USER, human );
         } else {
-            result = "Échec de l'inscription.";
+            session.setAttribute("errors", errors);
         }
     } catch ( DAOException e ) {
         result = "Échec de l'inscription : une erreur imprévue est survenue, merci de réessayer dans quelques instants.";
@@ -93,15 +97,12 @@ public final class SignUpForm {
     }
 }
 
-    private void passwordValidation( String password, String confirmation ) throws Exception {
-        if ( password != null && confirmation != null ) {
-            if ( !password.equals( confirmation ) ) {
-                throw new Exception( "Les mots de passe entrés sont différents, merci de les saisir à nouveau." );
-            } else if ( password.length() < 8 ) {
-                throw new Exception( "Les mots de passe doivent contenir au moins 8 caractères." );
-            }
+    private void passwordValidation( String password) throws Exception {
+        if ( password != null ) {
+            if (password.length() < 6)
+                throw new Exception( "Le mot de passe doit faire au moins 6 caractères." );
         } else {
-            throw new Exception( "Merci de saisir et confirmer votre mot de passe." );
+            throw new Exception( "Veuillez saisir votre mot de passe." );
         }
     }
 
@@ -135,7 +136,7 @@ public final class SignUpForm {
         try {
            nameValidation( lastname );
        } catch ( Exception e ) {
-           setError( FIRSTNAME_FIELD, e.getMessage() );
+           setError( LASTNAME_FIELD, e.getMessage() );
        }
        human.setLastName( lastname );
     }
@@ -183,9 +184,9 @@ public final class SignUpForm {
  * Appel à la validation des mots de passe reçus, chiffrement du mot de
  * passe et initialisation de la propriété motDePasse du bean
  */
-    private void passwordProcess( String password, String confirmation, Human human ) {
+    private void passwordProcess( String password, Human human ) {
         try {
-            passwordValidation( password, confirmation );
+            passwordValidation( password );
         } catch ( Exception e ) {
             setError( PASS_FIELD, e.getMessage() );
             setError( CONF_FIELD, null );
@@ -198,18 +199,5 @@ public final class SignUpForm {
      */
     private void setError( String field, String message ) {
         errors.put( field, message );
-    }
-
-    /*
-     * Méthode utilitaire qui retourne null si un champ est vide, et son contenu
-     * sinon.
-     */
-    private static String getFieldValue( HttpServletRequest request, String fieldName ) {
-        String value = request.getParameter( fieldName );
-        if ( value == null || value.trim().length() == 0 ) {
-            return null;
-        } else {
-            return value.trim();
-        }
     }
 }
