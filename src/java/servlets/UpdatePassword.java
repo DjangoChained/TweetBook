@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author pierant
  */
-@WebServlet(name = "ChangePassword", urlPatterns = {"/ChangePassword"})
+@WebServlet(name = "UpdatePassword", urlPatterns = {"/ChangePassword"})
 public class UpdatePassword extends HttpServlet {
     
     public static final String CONF_DAO_FACTORY = "daofactory";

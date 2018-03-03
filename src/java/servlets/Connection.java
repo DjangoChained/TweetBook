@@ -63,11 +63,11 @@ public class Connection extends HttpServlet {
                         out.println("{\"status\": \"success\"}");
                     } else {
                         out.print("{\"status\": \"error\"\n"
-                      + "\"message\": \"Email ou mot de passe incorrect\"");
+                      + "\"message\": \"Email ou mot de passe incorrect.\"\n}");
                     }
                 } else {
                     out.print("{\"status\": \"error\"\n"
-                      + "\"message\": \"Cet email n'appartient à aucun utilisateur.\"}");
+                      + "\"message\": \"Cet email n'appartient à aucun utilisateur.\"\n}");
                 }
             }
         } else {

@@ -11,4 +11,19 @@
     <listener>
         <listener-class>config.InitialiseDaoFactory</listener-class>
     </listener>
+    
+    <filter>
+	<filter-name>RestrictionFilter</filter-name>
+	<filter-class>filters.RestrictionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+            <filter-name>RestrictionFilter</filter-name>
+            <servlet-name>getHuman</servlet-name>
+            <servlet-name>getPost</servlet-name>
+            <servlet-name>Logout</servlet-name>
+            <servlet-name>Settings</servlet-name>
+            <servlet-name>UpdatePassword</servlet-name>
+            <servlet-name>Wall</servlet-name>
+    </filter-mapping>
+
 </web-app>

@@ -26,7 +26,7 @@ import static servlets.Test.CONF_DAO_FACTORY;
  *
  * @author pierant
  */
-@WebServlet(name = "Post", urlPatterns = {"/post"})
+@WebServlet(name = "getPost", urlPatterns = {"/post"})
 public class GetPost extends HttpServlet {
 
     /**

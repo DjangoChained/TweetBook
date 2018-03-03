@@ -20,14 +20,10 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "Logout", urlPatterns = {"/logout"})
 public class Logout extends HttpServlet {
-    public static final String VUE = "/login";
 
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Récupération et destruction de la session en cours */
         HttpSession session = request.getSession();
         session.invalidate();
-
-        /* Affichage de la page de connexion */
-        this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );
     }
 }
