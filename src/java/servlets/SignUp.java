@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(name = "SignUp", urlPatterns = {"/register"})
+@WebServlet(name = "SignUp", urlPatterns = {"/user/register"})
 public class SignUp extends HttpServlet {
     public static final String CONF_DAO_FACTORY = "daofactory";
     public static final String ATT_SESSION_USER = "sessionHuman";

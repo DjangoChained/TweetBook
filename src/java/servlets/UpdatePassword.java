@@ -56,7 +56,7 @@ public class UpdatePassword extends HttpServlet {
             }
         } catch (DAOException e){
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\"}");
+                out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
             }
         }
   }

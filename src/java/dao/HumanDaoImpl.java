@@ -182,6 +182,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     
     private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
     
+    @Override
     public void updatePassword(Human human, String password) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;

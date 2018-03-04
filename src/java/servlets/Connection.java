@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet(name = "Connection", urlPatterns = {"/login"})
+@WebServlet(name = "Connection", urlPatterns = {"/user/login"})
 public class Connection extends HttpServlet {
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String CONF_DAO_FACTORY = "daofactory";
