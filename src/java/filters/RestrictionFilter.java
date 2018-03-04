@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -22,6 +21,9 @@ public class RestrictionFilter implements Filter {
             ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+        
+        if(request.getHeader("X-Session") != null)
+            request = new HeaderChangerServletWrapper(request, "Cookie", "JSESSIONID="+request.getHeader("X-Session")+"; httpOnly");
 
         HttpSession session = request.getSession(false);
         boolean loggedIn = session != null && session.getAttribute(ATT_SESSION_USER) != null;
