@@ -14,8 +14,8 @@ import dao.HumanDao;
 import forms.SignUpForm;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet(name = "SignUp", urlPatterns = {"/user/register"})
@@ -29,7 +29,8 @@ public class SignUp extends HttpServlet {
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
-	
+
+    @Override
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
         response.setContentType("application/json");
         
@@ -47,13 +48,9 @@ public class SignUp extends HttpServlet {
         if (hu != null){
             out.println("{ \"status\": \"success\"}");
         } else {
-            Map<String, String> errors = (Map<String, String>)request.getSession(false).getAttribute("errors");
-            out.print("{\"status\": \"error\"\n"
+            out.print("{\"status\": \"error\",\n"
                       + "\"message\": \"");
-            String message = "";
-            for (Map.Entry<String, String> entry : errors.entrySet()) {
-                message += entry.getValue()+"\n";
-            }
+            String message = form.getErrors().entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
             out.println(message+"\"}");
 
         }

@@ -16,8 +16,8 @@ import dao.HumanDao;
 import forms.ConnectionForm;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 @WebServlet(name = "Connection", urlPatterns = {"/user/login"})
@@ -27,10 +27,12 @@ public class Connection extends HttpServlet {
     
     private HumanDao humanDao;
     
+    @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
-
+    
+    @Override
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         
         //Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
@@ -60,23 +62,20 @@ public class Connection extends HttpServlet {
                 if(testHuman != null){
                     if(BCrypt.checkpw(pwd, testHuman.getPassword())){
                         session.setAttribute( ATT_SESSION_USER, testHuman );
-                        out.println("{\"status\": \"success\"}");
+                        out.println("{\"status\": \"success\", \"sessionid\": \"" + session.getId() + "\"}");
                     } else {
-                        out.print("{\"status\": \"error\"\n"
+                        out.print("{\"status\": \"error\",\n"
                       + "\"message\": \"Email ou mot de passe incorrect.\"\n}");
                     }
                 } else {
-                    out.print("{\"status\": \"error\"\n"
+                    out.print("{\"status\": \"error\",\n"
                       + "\"message\": \"Cet email n'appartient à aucun utilisateur.\"\n}");
                 }
             }
         } else {
-            out.print("{\"status\": \"error\"\n"
+            out.print("{\"status\": \"error\",\n"
                       + "\"message\": \"");
-            String message = "";
-            for (Map.Entry<String, String> entry : form.getErrors().entrySet()) {
-                message += entry.getValue()+"\n";
-            }
+            String message = form.getErrors().entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
             out.println(message+"\"}");
         }         
     }
