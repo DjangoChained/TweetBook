@@ -24,6 +24,7 @@
             <servlet-name>Settings</servlet-name>
             <servlet-name>UpdatePassword</servlet-name>
             <servlet-name>Wall</servlet-name>
+            <servlet-name>Reaction</servlet-name>
     </filter-mapping>
 
 </web-app>

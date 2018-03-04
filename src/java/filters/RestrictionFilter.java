@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter(servletNames = {"getHuman", "getPost", "Logout", "Settings", "UpdatePassword", "Wall"})
+@WebFilter(servletNames = {"getHuman", "getPost", "Logout", "Settings", "UpdatePassword", "Wall", "Reaction"})
 public class RestrictionFilter implements Filter {
     public static final String ATT_SESSION_USER = "sessionHuman";
 
