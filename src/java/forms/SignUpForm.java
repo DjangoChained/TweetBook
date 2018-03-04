@@ -29,7 +29,6 @@ public final class SignUpForm {
     private static final String BIRTHDATE_FIELD = "birthdate";
     private static final String EMAIL_FIELD  = "email";
     private static final String PASS_FIELD   = "password";
-    private static final String CONF_FIELD   = "confirmation";
     private static final String USERNAME_FIELD    = "username";
     
     private String result;
@@ -106,9 +105,9 @@ public final class SignUpForm {
         }
     }
 
-    private void nameValidation( String name ) throws Exception {
+    private void nameValidation( String name, String type ) throws Exception {
         if ( name == null || name.length() < 3 ) {
-            throw new Exception( "Le nom d'utilisateur doit contenir au moins 3 caractères." );
+            throw new Exception( "Le " + type + " doit contenir au moins 3 caractères." );
         }
     }
     
@@ -125,7 +124,7 @@ public final class SignUpForm {
     
     private void firstnameProcess(String firstname, Human human) {
         try {
-           nameValidation( firstname );
+           nameValidation( firstname, "prénom" );
        } catch ( Exception e ) {
            setError(FIRSTNAME_FIELD, e.getMessage());
        }
@@ -134,7 +133,7 @@ public final class SignUpForm {
 
     private void lastnameProcess(String lastname, Human human) {
         try {
-           nameValidation( lastname );
+           nameValidation( lastname, "nom de famille" );
        } catch ( Exception e ) {
            setError( LASTNAME_FIELD, e.getMessage() );
        }
@@ -173,7 +172,7 @@ public final class SignUpForm {
    
    private void usernameProcess(String username, Human human) {
        try {
-           nameValidation( username );
+           nameValidation( username, "nom d'utilisateur" );
        } catch ( Exception e ) {
            setError( USERNAME_FIELD, e.getMessage() );
        }
@@ -189,7 +188,6 @@ public final class SignUpForm {
             passwordValidation( password );
         } catch ( Exception e ) {
             setError( PASS_FIELD, e.getMessage() );
-            setError( CONF_FIELD, null );
         }
         human.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         }
