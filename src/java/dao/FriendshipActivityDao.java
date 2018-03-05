@@ -17,7 +17,9 @@ public interface FriendshipActivityDao {
     
     ArrayList<FriendshipActivity> getAll() throws DAOException;
     FriendshipActivity get(int id) throws DAOException;
+    ArrayList<Integer> getFriends(int id_human) throws DAOException;
     ArrayList<FriendshipActivity> getByHuman(int id_human) throws DAOException;
+    int getByFriends(int id_human, int id_friend) throws DAOException;
     
     void delete(int id) throws DAOException;
 }

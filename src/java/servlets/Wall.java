@@ -114,7 +114,7 @@ public class Wall extends HttpServlet {
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
-                            "   \"id_second_human\": \""+act.getId_second_human()+"\" " +
+                            "   \"id_friend\": \""+act.getId_second_human()+"\" " +
                             "}");
             out.print(String.join(",", res));
             out.print("]}");
