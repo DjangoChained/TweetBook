@@ -32,7 +32,7 @@ public class Settings extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
-        /* Récupération d'une instance de notre DAO Utilisateur */
+        
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -61,6 +61,7 @@ public class Settings extends HttpServlet {
                             "        \"birthdate\": \""+human.getBirthDate()+"\",\n" +
                             "        \"email\": \""+human.getEmail()+"\",\n" +
                             "        \"username\": \""+human.getUsername()+"\"\n" +
+                            "        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
                             "    }\n" +
                             "}");
         }
@@ -82,7 +83,7 @@ public class Settings extends HttpServlet {
         human.setBirthDate(data.getProperty("birthdate"));
         human.setUsername(data.getProperty("username"));
         human.setEmail(data.getProperty("email"));
-        human.setVisibility(data.getProperty("visibility"));
+        human.setVisibility(beans.ActivityVisibility.valueOf(data.getProperty("visibility")));
         
         try {
             humanDao.update(human);
