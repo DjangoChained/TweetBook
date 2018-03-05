@@ -78,7 +78,7 @@ public class Settings extends HttpServlet {
         Properties data = gson.fromJson(reader, Properties.class);
         
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
-        human.setFirstName(data.getProperty("lastname"));
+        human.setFirstName(data.getProperty("firstname"));
         human.setLastName(data.getProperty("lastname"));
         human.setBirthDate(data.getProperty("birthdate"));
         human.setUsername(data.getProperty("username"));
