@@ -91,7 +91,7 @@ public class Settings extends HttpServlet {
             }
         } catch (DAOException e){
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \""+e.getMessage()+"\"}");
             }
         }
   }

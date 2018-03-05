@@ -69,7 +69,7 @@ public class Reaction extends HttpServlet {
                 int id_human = Integer.parseInt(data.getProperty("id_human"));
                 int id_post = Integer.parseInt(data.getProperty("id_post"));
                 
-                if (reaction == beans.Reaction.LIKE){
+                if (reaction == beans.Reaction.LIKE) {
                     DislikeActivity dislike = dislikeDao.get(id_human, id_post);
                     if (dislike != null){
                         dislikeDao.delete(dislike.getId());
@@ -92,10 +92,10 @@ public class Reaction extends HttpServlet {
                     likeDao.create(like);
                     out.println("{\"status\": \"success\",\n\"id\": \""+dislike.getId()+"\")}");
                 } else {
-                    out.println("{\"status\": \"error\"\n\"message\": \"reaction invalide\"}");
+                    out.println("{\"status\": \"error\",\n\"message\": \"réaction invalide\"}");
                 }
             } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du dislike\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post\"}");
             }
     }
 
