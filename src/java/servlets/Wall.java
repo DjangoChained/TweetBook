@@ -11,7 +11,6 @@ import beans.Human;
 import beans.LikeActivity;
 import beans.LinkPost;
 import beans.PhotoPost;
-import beans.Reaction;
 import beans.TextPost;
 import com.google.gson.Gson;
 import dao.DAOException;
@@ -178,34 +177,8 @@ public class Wall extends HttpServlet {
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
-        } else if (data.getProperty("type").equals("like")){
-            try {
-                LikeActivity act = new LikeActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
-                act.setId_human(human.getId());
-                act.setReaction(Reaction.LIKE);
-                act.setId_post(Integer.parseInt(data.getProperty("id_post")));
-                likeActivityDao.create(act);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
-            } catch (DAOException e){
-                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du like\"}");
-            }
-        } else if (data.getProperty("type").equals("dislike")){
-            try {
-                DislikeActivity act = new DislikeActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
-                act.setId_human(human.getId());
-                act.setReaction(Reaction.DISLIKE);
-                act.setId_post(Integer.parseInt(data.getProperty("id_post")));
-                dislikeActivityDao.create(act);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
-            } catch (DAOException e){
-                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du dislike\"}");
-            }
         } else {
-            out.println("{\"status\": \"error\",\n\"message\": \"veuillez indiquer un type de post valide (text, link, photo, like ou dislike)\"}");
+            out.println("{\"status\": \"error\",\n\"message\": \"Un type de publication invalide a été spécifié.\"}");
         }
     }
 
