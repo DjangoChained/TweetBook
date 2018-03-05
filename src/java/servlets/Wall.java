@@ -71,37 +71,38 @@ public class Wall extends HttpServlet {
             ArrayList<TextPost> textPosts = textPostDao.getByHuman(human.getId());
             ArrayList<LinkPost> linkPosts = linkPostDao.getByHuman(human.getId());
             ArrayList<FriendshipActivity> friends = friendshipDao.getByHuman(human.getId());
+            ArrayList<String> res = new ArrayList<>();
             
-            out.println("{\n" +
-                            "    \"status\": \"success\",\n" +
-                            "    \"activities\": [\n");
+            out.print("{" +
+                            "    \"status\": \"success\"," +
+                            "    \"activities\": [");
             for(LikeActivity act : likes){
-                out.println("{" +
+                res.add("{" +
                             "   \"type\": \"like\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
-                            "},\n");
+                            "}");
             }
             for(DislikeActivity act : dislikes){
-                out.println("{" +
+                res.add("{" +
                             "   \"type\": \"dislike\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
-                            "},\n");
+                            "}");
             }
             for(TextPost post : textPosts){
-                out.println("{" +
+                res.add("{" +
                             "   \"type\": \"text\", " +
                             "   \"id\": \""+post.getId()+"\", " +
                             "   \"date\": \""+post.getDate()+"\", " +
                             "   \"id_human\": \""+post.getId_human()+"\", " +
                             "   \"content\": \""+post.getContent()+"\" " +
-                            "},\n");
+                            "}");
             }
             for(LinkPost post : linkPosts){
-                out.println("{" +
+                res.add("{" +
                             "   \"type\": \"link\", " +
                             "   \"id\": \""+post.getId()+"\", " +
                             "   \"date\": \""+post.getDate()+"\", " +
@@ -109,19 +110,26 @@ public class Wall extends HttpServlet {
                             "   \"url\": \""+post.getUrl()+"\", " +
                             "   \"title\": \""+post.getTitle()+"\", " +
                             "   \"content\": \""+post.getContent()+"\" " +
-                            "},\n");
+                            "}");
             }
             for(FriendshipActivity act : friends){
-                out.println("{" +
+                res.add("{" +
                             "   \"type\": \"text\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
                             "   \"id_second_human\": \""+act.getId_second_human()+"\" " +
-                            "},\n");
+                            "}");
             }
-            out.println("{}\n");
-            out.println("]\n}");
+            int i = 0;
+            for (String s : res){
+                if(i++ == res.size() - 1){
+                    out.print(s);
+                } else {
+                    out.print(s+",");
+                }
+            }
+            out.print("]}");
         } catch (DAOException e){
             out.println("{\"status\": \"error\"}");
             

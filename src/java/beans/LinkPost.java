@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
  */
 public class LinkPost extends Post {
     
-    String url;
-    String title;
+    private String url;
+    private String title;
     
     public LinkPost(){}
     

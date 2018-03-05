@@ -121,6 +121,30 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
         return activity;
     }
     
+    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ? AND reaction = 'like'";
+    @Override
+    public LikeActivity get(int id_human, int id_post) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        LikeActivity activity = null;
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_HUMAN_AND_POST, false, id_human, id_post );
+            resultSet = preparedStatement.executeQuery();
+            if ( resultSet.next() ) {
+                activity = map( resultSet );
+            }
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+
+        return activity;
+    }
+    
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND reaction = 'like'";
     @Override
     public ArrayList<LikeActivity> getByHuman(int id_human) throws DAOException {

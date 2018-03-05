@@ -18,6 +18,7 @@ public interface DislikeActivityDao {
     
     ArrayList<DislikeActivity> getAll() throws DAOException;
     DislikeActivity get(int id) throws DAOException;
+    DislikeActivity get(int id_human, int id_post) throws DAOException;
     ArrayList<DislikeActivity> getByHuman(int id_human) throws DAOException;
     
     void delete(int id) throws DAOException;

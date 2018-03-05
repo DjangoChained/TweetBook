@@ -5,12 +5,14 @@
  */
 package servlets;
 
-import beans.FriendshipActivity;
+import beans.DislikeActivity;
 import beans.Human;
+import beans.LikeActivity;
 import com.google.gson.Gson;
 import dao.DAOException;
 import dao.DAOFactory;
-import dao.FriendshipActivityDao;
+import dao.DislikeActivityDao;
+import dao.LikeActivityDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,11 +33,13 @@ public class Reaction extends HttpServlet {
     
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String CONF_DAO_FACTORY = "daofactory";
-    private FriendshipActivityDao friendshipDao;
+    private LikeActivityDao likeDao;
+    private DislikeActivityDao dislikeDao;
     
     @Override
     public void init() throws ServletException {
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
+        this.likeDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLikeActivityDao();
+        this.dislikeDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getDislikeActivityDao();
     }
 
     /**
@@ -61,14 +65,35 @@ public class Reaction extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
-                FriendshipActivity act = new FriendshipActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
-                act.setId_human(human.getId());
-                act.setReaction(beans.Reaction.DISLIKE);
-                act.setId_post(Integer.parseInt(data.getProperty("id_post")));
-                dislikeActivityDao.create(act);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
+                beans.Reaction reaction = beans.Reaction.valueOf(data.getProperty("reaction"));
+                int id_human = Integer.parseInt(data.getProperty("id_human"));
+                int id_post = Integer.parseInt(data.getProperty("id_post"));
+                
+                if (reaction == beans.Reaction.LIKE){
+                    DislikeActivity dislike = dislikeDao.get(id_human, id_post);
+                    if (dislike != null){
+                        dislikeDao.delete(dislike.getId());
+                    }
+                    LikeActivity like = new LikeActivity();
+                    like.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                    like.setId_human(id_human);
+                    like.setId_post(id_post);
+                    likeDao.create(like);
+                    out.println("{\"status\": \"success\",\n\"id\": \""+like.getId()+"\")}");
+                } else if (reaction == beans.Reaction.DISLIKE){
+                    LikeActivity like = likeDao.get(id_human, id_post);
+                    if (like != null){
+                        likeDao.delete(like.getId());
+                    }
+                    DislikeActivity dislike = new DislikeActivity();
+                    dislike.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                    dislike.setId_human(id_human);
+                    dislike.setId_post(id_post);
+                    likeDao.create(like);
+                    out.println("{\"status\": \"success\",\n\"id\": \""+dislike.getId()+"\")}");
+                } else {
+                    out.println("{\"status\": \"error\"\n\"message\": \"reaction invalide\"}");
+                }
             } catch (DAOException e){
                 out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du dislike\"}");
             }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  */
 public class PhotoPost extends Post{
     
-    String photoPath;
+    private String photoPath;
     
     public PhotoPost(){}
     

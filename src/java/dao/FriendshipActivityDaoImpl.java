@@ -40,7 +40,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id, id_second_human) VALUES (?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id_human, id_second_human) VALUES (?, ?)";
     @Override
     public FriendshipActivity create(FriendshipActivity activity) throws DAOException {
         Connection connexion = null;
