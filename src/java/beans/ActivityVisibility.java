@@ -2,9 +2,9 @@ package beans;
 
 public enum ActivityVisibility {
     
-    AUTHOR ("vous"),
-    FRIENDS("amis"),
-    ALL("tout le monde");
+    AUTHOR ("author"),
+    FRIENDS("friends"),
+    ALL("all");
     
     private String name = "";
 
@@ -12,7 +12,15 @@ public enum ActivityVisibility {
     this.name = name;
   }
 
-  public String toString(){
+  @Override
+  public String toString() {
     return name;
+  }
+  
+  public static ActivityVisibility fromString(String name) {
+      for(ActivityVisibility a : ActivityVisibility.values()) {
+          if(a.toString().equalsIgnoreCase(name)) return a;
+      }
+      throw new IllegalArgumentException("Cette valeur n'est pas une visibilité valide.");
   }
 }

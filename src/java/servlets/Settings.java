@@ -13,6 +13,7 @@ import dao.HumanDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author pierant
  */
-@WebServlet(name = "Settings", urlPatterns = {"/settings"})
+@WebServlet(name = "Settings", urlPatterns = {"/user/settings"})
 public class Settings extends HttpServlet {
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String CONF_DAO_FACTORY = "daofactory";
@@ -58,7 +59,7 @@ public class Settings extends HttpServlet {
                             "        \"id\": \""+human.getId()+"\",\n" +
                             "        \"firstName\": \""+human.getFirstName()+"\",\n" +
                             "        \"lastName\": \""+human.getLastName()+"\",\n" +
-                            "        \"birthdate\": \""+human.getBirthDate()+"\",\n" +
+                            "        \"birthdate\": \""+human.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
                             "        \"email\": \""+human.getEmail()+"\",\n" +
                             "        \"username\": \""+human.getUsername()+"\"\n" +
                             "        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
@@ -78,7 +79,7 @@ public class Settings extends HttpServlet {
         Properties data = gson.fromJson(reader, Properties.class);
         
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
-        human.setFirstName(data.getProperty("lastname"));
+        human.setFirstName(data.getProperty("firstname"));
         human.setLastName(data.getProperty("lastname"));
         human.setBirthDate(data.getProperty("birthdate"));
         human.setUsername(data.getProperty("username"));
@@ -88,11 +89,11 @@ public class Settings extends HttpServlet {
         try {
             humanDao.update(human);
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\"}");
             }
         } catch (DAOException e){
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \""+e.getMessage().replace("\"", "\\\"").replace("\n", "")+"\"}");
             }
         }
   }

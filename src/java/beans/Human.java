@@ -33,7 +33,7 @@ public class Human {
         this.birthDate = birthDate;
         this.email = email;
         this.username = username;
-        this.visibility = ActivityVisibility.valueOf(visibility);
+        this.visibility = ActivityVisibility.fromString(visibility);
     }
     
     public Human(){}
@@ -106,7 +106,7 @@ public class Human {
     }
     
     public void setVisibility(String visibility) {
-        this.visibility = ActivityVisibility.valueOf(visibility);
+        this.visibility = ActivityVisibility.fromString(visibility);
     }
 
     public ActivityVisibility getVisibility() {

@@ -107,7 +107,7 @@ public class Friends extends HttpServlet {
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
             } catch (DAOException e){
-                out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de l'amitié\"}");
+                out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de la relation d'ami\"}");
             }
     }
     

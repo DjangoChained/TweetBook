@@ -151,16 +151,16 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     
     @Override
     public ArrayList<Human> getFriends(ArrayList<Integer> friends_ids) throws DAOException {
-    ArrayList<Human> humans = new ArrayList<>();
-   
-    for (Integer id: friends_ids) {
-        humans.add(this.get(id));
+        ArrayList<Human> humans = new ArrayList<>();
+
+        for (Integer id: friends_ids) {
+            humans.add(this.get(id));
+        }
+
+        return humans;
     }
    
-    return humans;
-}
-    
-    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, visibility = ? WHERE id = ?";
+    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, activityvisibility = ? WHERE id = ?";
     @Override
     public void update(Human human) throws DAOException {
         Connection connexion = null;
