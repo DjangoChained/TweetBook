@@ -65,7 +65,7 @@ public class UpdatePassword extends HttpServlet {
                 out.println("{\"status\": \"error\"\n\"message\": \"Veuillez renseigner les mots de passe\"}");
             }
         } catch (DAOException e){
-            out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
+            out.println("{\"status\": \"error\",\"message\": \""+e.getMessage()+"\"}");
         }
   }
 }

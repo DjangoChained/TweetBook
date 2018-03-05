@@ -11,7 +11,6 @@ import beans.Human;
 import beans.LikeActivity;
 import beans.LinkPost;
 import beans.PhotoPost;
-import beans.Reaction;
 import beans.TextPost;
 import com.google.gson.Gson;
 import dao.DAOException;
@@ -25,7 +24,6 @@ import dao.TextPostDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -76,23 +74,23 @@ public class Wall extends HttpServlet {
             out.print("{" +
                             "    \"status\": \"success\"," +
                             "    \"activities\": [");
-            for(LikeActivity act : likes){
+            for(LikeActivity act : likes)
                 res.add("{" +
-                            "   \"type\": \"like\", " +
+                            "   \"type\": \"reaction\", " +
+                            "   \"reaction\": \"like\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
                             "}");
-            }
-            for(DislikeActivity act : dislikes){
+            for(DislikeActivity act : dislikes)
                 res.add("{" +
-                            "   \"type\": \"dislike\", " +
+                            "   \"type\": \"reaction\", " +
+                            "   \"reaction\": \"dislike\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
                             "}");
-            }
-            for(TextPost post : textPosts){
+            for(TextPost post : textPosts)
                 res.add("{" +
                             "   \"type\": \"text\", " +
                             "   \"id\": \""+post.getId()+"\", " +
@@ -100,8 +98,7 @@ public class Wall extends HttpServlet {
                             "   \"id_human\": \""+post.getId_human()+"\", " +
                             "   \"content\": \""+post.getContent()+"\" " +
                             "}");
-            }
-            for(LinkPost post : linkPosts){
+            for(LinkPost post : linkPosts)
                 res.add("{" +
                             "   \"type\": \"link\", " +
                             "   \"id\": \""+post.getId()+"\", " +
@@ -111,8 +108,7 @@ public class Wall extends HttpServlet {
                             "   \"title\": \""+post.getTitle()+"\", " +
                             "   \"content\": \""+post.getContent()+"\" " +
                             "}");
-            }
-            for(FriendshipActivity act : friends){
+            for(FriendshipActivity act : friends)
                 res.add("{" +
                             "   \"type\": \"friend\", " +
                             "   \"id\": \""+act.getId()+"\", " +
@@ -120,15 +116,7 @@ public class Wall extends HttpServlet {
                             "   \"id_human\": \""+act.getId_human()+"\", " +
                             "   \"id_friend\": \""+act.getId_second_human()+"\" " +
                             "}");
-            }
-            int i = 0;
-            for (String s : res){
-                if(i++ == res.size() - 1){
-                    out.print(s);
-                } else {
-                    out.print(s+",");
-                }
-            }
+            out.print(String.join(",", res));
             out.print("]}");
         } catch (DAOException e){
             out.println("{\"status\": \"error\"}");
@@ -162,7 +150,7 @@ public class Wall extends HttpServlet {
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du post\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
         } else if (data.getProperty("type").equals("link")){
             try {
@@ -176,7 +164,7 @@ public class Wall extends HttpServlet {
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du post\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
         } else if (data.getProperty("type").equals("photo")){
             try {
@@ -189,36 +177,10 @@ public class Wall extends HttpServlet {
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du post\"}");
-            }
-        } else if (data.getProperty("type").equals("like")){
-            try {
-                LikeActivity act = new LikeActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
-                act.setId_human(human.getId());
-                act.setReaction(Reaction.LIKE);
-                act.setId_post(Integer.parseInt(data.getProperty("id_post")));
-                likeActivityDao.create(act);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
-            } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du like\"}");
-            }
-        } else if (data.getProperty("type").equals("dislike")){
-            try {
-                DislikeActivity act = new DislikeActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
-                act.setId_human(human.getId());
-                act.setReaction(Reaction.DISLIKE);
-                act.setId_post(Integer.parseInt(data.getProperty("id_post")));
-                dislikeActivityDao.create(act);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
-            } catch (DAOException e){
-                out.println("{\"status\": \"error\"\n\"message\": \"Erreur lors de la création du dislike\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
         } else {
-            out.println("{\"status\": \"error\"\n\"message\": \"veuillez indiquer un type de post valide (text, link, photo, like ou dislike)\"}");
+            out.println("{\"status\": \"error\",\n\"message\": \"Un type de publication invalide a été spécifié.\"}");
         }
     }
 
