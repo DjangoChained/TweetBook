@@ -114,11 +114,11 @@ public class Wall extends HttpServlet {
             }
             for(FriendshipActivity act : friends){
                 res.add("{" +
-                            "   \"type\": \"text\", " +
+                            "   \"type\": \"friend\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
-                            "   \"id_second_human\": \""+act.getId_second_human()+"\" " +
+                            "   \"id_friend\": \""+act.getId_second_human()+"\" " +
                             "}");
             }
             int i = 0;
