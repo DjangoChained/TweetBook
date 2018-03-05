@@ -49,15 +49,23 @@ public class UpdatePassword extends HttpServlet {
         
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
         
+        PrintWriter out = response.getWriter();
+        
         try {
-            humanDao.updatePassword(human, BCrypt.hashpw(data.getProperty("password"), BCrypt.gensalt()));
-            try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\")}");
+            if (data.getProperty("currentPassword") != null && data.getProperty("currentPassword").trim().length() != 0 && data.getProperty("newPassword") != null && data.getProperty("newPassword").trim().length() != 0) {
+                Human testHuman = humanDao.get(human.getEmail());
+
+                if(BCrypt.checkpw(data.getProperty("currentPassword"), testHuman.getPassword())){
+                    humanDao.updatePassword(human, BCrypt.hashpw(data.getProperty("newPassword"), BCrypt.gensalt()));
+                    out.print("{\"status\": \"success\"}");
+                } else {
+                    out.println("{\"status\": \"error\",\"message\": \"mauvaise combinaison email / mot de passe\"}");
+                }
+            } else {
+                out.println("{\"status\": \"error\"\n\"message\": \"Veuillez renseigner les mots de passe\"}");
             }
         } catch (DAOException e){
-            try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
-            }
+            out.println("{\"status\": \"error\"\n\"message\": \""+e.getMessage()+"\"}");
         }
   }
 }
