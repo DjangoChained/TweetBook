@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
  * @author pierant
  */
 public abstract class Post extends Activity {
-    private String content;
+    protected String content;
     
     public Post(){}
     

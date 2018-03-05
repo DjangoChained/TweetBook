@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 /**
@@ -32,17 +33,19 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return post;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO textpost (date, id_human, content) VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO textpost (id) VALUES (?)";
     @Override
-    public void create(TextPost post) throws IllegalArgumentException {
+    public void create(TextPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
 
         try {
-            /* Récupération d'une connexion depuis la Factory */
+            int id_activity = super.createActivity(daoFactory, post.getDate(), post.getId_human());
+            super.createPost(daoFactory, id_activity, post.getContent());
+            
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity);
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );
@@ -60,14 +63,14 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         }
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content FROM textpost";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id";
     @Override
-    public ArrayList<Post> getAll() throws DAOException {
+    public ArrayList<TextPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
         TextPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<TextPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
@@ -86,7 +89,7 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content FROM textpost WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE id = ?";
     @Override
     public TextPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -110,24 +113,23 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content FROM textpost WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE id_human = ?";
     @Override
-    public ArrayList<Post> getByHuman(int id_human) throws DAOException {
+    public ArrayList<TextPost> getByHuman(int id_human) throws DAOException {
+        System.out.println("entré dans textpost avec id_human = "+id_human);
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         TextPost post = null;
-        ArrayList<Post> posts = new ArrayList<>();
+        ArrayList<TextPost> posts = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
-                if ( resultSet.next() ) {
-                    post = map( resultSet );
-                    posts.add(post);
-                }
+                post = map( resultSet );
+                posts.add(post);
             }
             
         } catch ( SQLException e ) {
@@ -139,27 +141,17 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return posts;
     }
 
-    private static final String SQL_UPDATE = "UPDATE textpost SET date = ?, id_human = ?, content = ? WHERE id = ?";
     @Override
     public void update(TextPost post) throws DAOException {
-        Connection connexion = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getDate(), post.getId_human(), post.getContent(), post.getId());
-            preparedStatement.executeUpdate();
-        } catch ( SQLException e ) {
-            throw new DAOException( e );
-        } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
-        }
+        super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
+        super.updatePost(daoFactory, post.getId(), post.getContent());
     }
 
     private static final String SQL_DELETE= "DELETE FROM textpost WHERE id = ?";
     @Override
     public void delete(int id) throws DAOException {
+        super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
+        super.delete(daoFactory, id, "DELETE FROM post WHERE id = ");
         super.delete(daoFactory, id, SQL_DELETE);
     }
 }

@@ -14,8 +14,11 @@ public interface HumanDao {
     ArrayList<Human> getAll() throws DAOException;
     Human get(int id) throws DAOException;
     Human get(String email) throws DAOException;
+    ArrayList<Human> getFriends(ArrayList<Integer> friends_ids) throws DAOException;
     
     void update(Human human) throws DAOException;
+    
+    void updatePassword(Human human, String password) throws DAOException;
     
     void delete(int id) throws DAOException;
 }

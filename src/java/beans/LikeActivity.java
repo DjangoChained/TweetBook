@@ -15,9 +15,12 @@ import java.time.LocalDateTime;
  */
 public class LikeActivity extends ReactionActivity {
     
-    public LikeActivity(){}
+    public LikeActivity(){
+        this.reaction = beans.Reaction.LIKE;
+    }
     
     public LikeActivity(int id, LocalDateTime date, int id_human, Reaction reaction, int id_post){
-        super(id, date, id_human, reaction, id_post);
+        super(id, date, id_human, id_post);
+        this.reaction = beans.Reaction.LIKE;
     }
 }

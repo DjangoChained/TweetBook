@@ -27,22 +27,25 @@ public class GetHuman extends HttpServlet {
     
     private HumanDao humanDao;
     
+    @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
-    
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+
         try (PrintWriter out = response.getWriter()) {
             int humanId = -1;
             
@@ -51,7 +54,7 @@ public class GetHuman extends HttpServlet {
             } catch(NumberFormatException e){
                 out.println("{\n" +
 "    \"status\": \"error\",\n" +
-"    \"message\": \"identifiant de publication invalide\"\n" +
+"    \"message\": \"Veuillez entrer un entier valide\"\n" +
 "}");
             }
             
@@ -69,50 +72,10 @@ public class GetHuman extends HttpServlet {
                 } else {
                 out.println("{\n" +
 "    \"status\": \"error\",\n" +
-"    \"message\": \"Il n'existe aucun utilisateur avec cet id\"\n" +
+"    \"message\": \"Il n'existe aucun utilisateur avec cet identifiant\"\n" +
 "}");
                 }
             } 
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

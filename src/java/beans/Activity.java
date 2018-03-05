@@ -9,9 +9,9 @@ import java.util.Date;
  * @author pierant
  */
 public abstract class Activity {
-    private int id;
-    private LocalDateTime date;
-    private int id_human;
+    protected int id;
+    protected LocalDateTime date;
+    protected int id_human;
     
     public Activity(){}
     

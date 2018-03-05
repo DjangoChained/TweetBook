@@ -5,6 +5,7 @@
  */
 package dao;
 
+import beans.ActivityVisibility;
 import static dao.DAOImpl.*;
 import beans.Human;
 import java.sql.Connection;
@@ -14,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  *
@@ -42,7 +42,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     
     private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
     @Override
-    public void create(Human human) throws IllegalArgumentException {
+    public void create(Human human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
@@ -149,7 +149,21 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         return human;
     }
     
-    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, password = ? WHERE id = ?";
+    @Override
+    public ArrayList<Human> getFriends(ArrayList<Integer> friends_ids) throws DAOException {
+        ArrayList<Human> humans = new ArrayList<>();
+
+        for (Integer id: friends_ids) {
+            humans.add(this.get(id));
+        }
+
+        return humans;
+    }
+   
+    return humans;
+}
+    
+    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, activityvisibility = ?::activityvisibility WHERE id = ?";
     @Override
     public void update(Human human) throws DAOException {
         Connection connexion = null;
@@ -157,10 +171,14 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         ResultSet resultSet = null;
 
         try {
-            /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
+            String visibility = "all";
+            if (human.getVisibility() == ActivityVisibility.authoronly)
+                visibility = "authoronly";
+            else if (human.getVisibility() == ActivityVisibility.friends)
+                visibility = "friends";
             preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
-                                                               human.getEmail(), human.getUsername(), human.getPassword(), human.getId());
+                                                               human.getEmail(), human.getUsername(), human.getVisibility(), human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
@@ -173,5 +191,24 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     @Override
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, SQL_DELETE);
+    }
+    
+    private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
+    
+    @Override
+    public void updatePassword(Human human, String password) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE_PASSWORD, false, password, human.getId());
+            preparedStatement.executeUpdate();
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
     }
 }

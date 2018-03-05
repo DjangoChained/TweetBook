@@ -41,17 +41,18 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO reactionactivity (date, id_human, reaction, id_post) VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?, ?)";
     @Override
-    public DislikeActivity create(DislikeActivity activity) throws IllegalArgumentException {
+    public DislikeActivity create(DislikeActivity activity) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
 
         try {
-            /* Récupération d'une connexion depuis la Factory */
+            int id_activity = super.createActivity(daoFactory, activity.getDate(), activity.getId_human());
+            
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(activity.getDate()), activity.getId_human(), activity.getReaction(), activity.getId_post());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity, activity.getReaction().toString(), activity.getId_post());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création de l'activité, aucune ligne ajoutée dans la table." );
@@ -69,15 +70,15 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
         }
         return activity;
     }
-
-    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, id_post FROM reactionactivity WHERE reaction = 'dislike'";
+    
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id  WHERE r.reaction = 'dislike'";
     @Override
-    public ArrayList<Activity> getAll() throws DAOException {
+    public ArrayList<DislikeActivity> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
         DislikeActivity activity = null;
-        ArrayList<Activity> activities = new ArrayList<>();
+        ArrayList<DislikeActivity> activities = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
@@ -95,8 +96,8 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
 
         return activities;
     }
-
-    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, id_post FROM reactionactivity WHERE id = ?";
+    
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE a.id = ?";
     @Override
     public DislikeActivity get(int id) throws DAOException {
         Connection connexion = null;
@@ -120,24 +121,46 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
         return activity;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, reaction, id_post FROM reactionactivity WHERE id_human = ? AND reaction = 'dislike'";
+    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ? AND reaction = 'dislike'";
     @Override
-    public ArrayList<Activity> getByHuman(int id_human) throws DAOException {
+    public DislikeActivity get(int id_human, int id_post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         DislikeActivity activity = null;
-        ArrayList<Activity> activities = new ArrayList<>();
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_HUMAN_AND_POST, false, id_human, id_post );
+            resultSet = preparedStatement.executeQuery();
+            if ( resultSet.next() ) {
+                activity = map( resultSet );
+            }
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+
+        return activity;
+    }
+    
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND reaction = 'dislike'";
+    @Override
+    public ArrayList<DislikeActivity> getByHuman(int id_human) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        DislikeActivity activity = null;
+        ArrayList<DislikeActivity> activities = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
-                if ( resultSet.next() ) {
-                    activity = map( resultSet );
-                    activities.add(activity);
-                }
+                activity = map( resultSet );
+                activities.add(activity);
             }
             
         } catch ( SQLException e ) {
@@ -152,6 +175,7 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
     private static final String SQL_DELETE= "DELETE FROM reactionactivity WHERE id = ?";
     @Override
     public void delete(int id) throws DAOException {
+        super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
         super.delete(daoFactory, id, SQL_DELETE);
     }
 }

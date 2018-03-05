@@ -14,36 +14,26 @@ import dao.LinkPostDao;
 import dao.PhotoPostDao;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static servlets.Test.CONF_DAO_FACTORY;
 
 /**
  *
  * @author pierant
  */
-@WebServlet(name = "Post", urlPatterns = {"/post"})
+@WebServlet(name = "getPost", urlPatterns = {"/post"})
 public class GetPost extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     
     private TextPostDao textPostDao;
     private LinkPostDao linkPostDao;
     private PhotoPostDao photoPostDao;
 
+    @Override
     public void init() throws ServletException {
         this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
         this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLinkPostDao();
@@ -54,18 +44,6 @@ public class GetPost extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         try (PrintWriter out = response.getWriter()) {
-            /*
-            out.println("{\n" +
-"    \"status\": \"success\",\n" +
-"    \"data\": {\n" +
-"        \"id\": \"123\",\n" +
-"        \"authorid\": \"123\",\n" +
-"        \"date\": \"2018-02-31T23:59:59+0100\",\n" +
-"        \"type\": \"photo\",\n" +
-"        \"content\": \"Bonjour je suis une pomme\",\n" +
-"        \"url\": \"/media/image.png\"\n" +
-"    }\n" +
-"}");*/
             int postId = -1;
             
             try {

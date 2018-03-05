@@ -16,9 +16,9 @@ import java.util.ArrayList;
 public interface TextPostDao {
     void create(TextPost post) throws DAOException;
     
-    ArrayList<Post> getAll() throws DAOException;
+    ArrayList<TextPost> getAll() throws DAOException;
     TextPost get(int id) throws DAOException;
-    ArrayList<Post> getByHuman(int id_human) throws DAOException;
+    ArrayList<TextPost> getByHuman(int id_human) throws DAOException;
     
     void update(TextPost post) throws DAOException;
     

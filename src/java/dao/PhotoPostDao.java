@@ -16,9 +16,9 @@ import java.util.ArrayList;
 public interface PhotoPostDao {
     PhotoPost create(PhotoPost post) throws DAOException;
     
-    ArrayList<Post> getAll() throws DAOException;
+    ArrayList<PhotoPost> getAll() throws DAOException;
     PhotoPost get(int id) throws DAOException;
-    ArrayList<Post> getByHuman(int id_human) throws DAOException;
+    ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException;
     
     void update(PhotoPost post) throws DAOException;
     

@@ -16,9 +16,10 @@ import java.util.ArrayList;
 public interface LikeActivityDao {
     LikeActivity create(LikeActivity post) throws DAOException;
     
-    ArrayList<Activity> getAll() throws DAOException;
+    ArrayList<LikeActivity> getAll() throws DAOException;
     LikeActivity get(int id) throws DAOException;
-    ArrayList<Activity> getByHuman(int id_human) throws DAOException;
+    LikeActivity get(int id_human, int id_post) throws DAOException;
+    ArrayList<LikeActivity> getByHuman(int id_human) throws DAOException;
     
     void delete(int id) throws DAOException;
 }

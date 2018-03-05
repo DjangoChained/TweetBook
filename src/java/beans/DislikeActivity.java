@@ -15,9 +15,12 @@ import java.time.LocalDateTime;
  */
 public class DislikeActivity extends ReactionActivity {
     
-    public DislikeActivity(){}
+    public DislikeActivity(){
+        this.reaction = beans.Reaction.DISLIKE;
+    }
     
     public DislikeActivity(int id, LocalDateTime date, int id_human, Reaction reaction, int id_post){
-        super(id, date, id_human, reaction, id_post);
+        super(id, date, id_human, id_post);
+        this.reaction = beans.Reaction.DISLIKE;
     }
 }

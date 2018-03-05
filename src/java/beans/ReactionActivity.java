@@ -14,14 +14,13 @@ import java.time.LocalDateTime;
  */
 public class ReactionActivity extends Activity{
     
-    private Reaction reaction;
-    private int id_post;
+    protected Reaction reaction;
+    protected int id_post;
     
     public ReactionActivity(){}
     
-    public ReactionActivity(int id, LocalDateTime date, int id_human, Reaction reaction, int id_post){
+    public ReactionActivity(int id, LocalDateTime date, int id_human, int id_post){
         super(id, date, id_human);
-        this.reaction = reaction;
         this.id_post = id_post;
     }
 
