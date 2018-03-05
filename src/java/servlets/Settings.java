@@ -13,6 +13,7 @@ import dao.HumanDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author pierant
  */
-@WebServlet(name = "Settings", urlPatterns = {"/settings"})
+@WebServlet(name = "Settings", urlPatterns = {"/user/settings"})
 public class Settings extends HttpServlet {
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String CONF_DAO_FACTORY = "daofactory";
@@ -58,7 +59,7 @@ public class Settings extends HttpServlet {
                             "        \"id\": \""+human.getId()+"\",\n" +
                             "        \"firstName\": \""+human.getFirstName()+"\",\n" +
                             "        \"lastName\": \""+human.getLastName()+"\",\n" +
-                            "        \"birthdate\": \""+human.getBirthDate()+"\",\n" +
+                            "        \"birthdate\": \""+human.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
                             "        \"email\": \""+human.getEmail()+"\",\n" +
                             "        \"username\": \""+human.getUsername()+"\"\n" +
                             "    }\n" +
