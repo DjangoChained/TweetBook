@@ -160,7 +160,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
     return humans;
 }
     
-    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, visibility = ? WHERE id = ?";
+    private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, visibility = ?::activityvisibility WHERE id = ?";
     @Override
     public void update(Human human) throws DAOException {
         Connection connexion = null;
@@ -168,15 +168,14 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         ResultSet resultSet = null;
 
         try {
-            /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
             String visibility = "all";
-            if (human.getVisibility() == ActivityVisibility.AUTHOR)
+            if (human.getVisibility() == ActivityVisibility.authoronly)
                 visibility = "authoronly";
-            else if (human.getVisibility() == ActivityVisibility.FRIENDS)
+            else if (human.getVisibility() == ActivityVisibility.friends)
                 visibility = "friends";
             preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
-                                                               human.getEmail(), human.getUsername(), visibility, human.getId());
+                                                               human.getEmail(), human.getUsername(), human.getVisibility(), human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
