@@ -76,14 +76,16 @@ public class Wall extends HttpServlet {
                             "    \"activities\": [");
             for(LikeActivity act : likes)
                 res.add("{" +
-                            "   \"type\": \"like\", " +
+                            "   \"type\": \"reaction\", " +
+                            "   \"reaction\": \"like\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
                             "}");
             for(DislikeActivity act : dislikes)
                 res.add("{" +
-                            "   \"type\": \"dislike\", " +
+                            "   \"type\": \"reaction\", " +
+                            "   \"reaction\": \"dislike\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\" " +
@@ -108,7 +110,7 @@ public class Wall extends HttpServlet {
                             "}");
             for(FriendshipActivity act : friends)
                 res.add("{" +
-                            "   \"type\": \"text\", " +
+                            "   \"type\": \"friend\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
