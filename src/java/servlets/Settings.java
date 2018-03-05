@@ -88,11 +88,11 @@ public class Settings extends HttpServlet {
         try {
             humanDao.update(human);
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\"}");
             }
         } catch (DAOException e){
             try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\",\n\"message\": \""+e.getMessage()+"\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \""+e.getMessage().replace("\"", "\\\"").replace("\n", "")+"\"}");
             }
         }
   }
