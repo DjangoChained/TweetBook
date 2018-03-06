@@ -18,6 +18,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -161,6 +163,32 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
             while(resultSet.next()) {
                 activity = map( resultSet );
                 activities.add(activity);
+            }
+            
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+
+        return activities;
+    }
+    
+    @Override
+    public Map<Integer, DislikeActivity> getHashByHuman(int id_human) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        DislikeActivity activity = null;
+        Map<Integer, DislikeActivity> activities = new HashMap<>();
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                activity = map( resultSet );
+                activities.put(activity.getId(), activity);
             }
             
         } catch ( SQLException e ) {

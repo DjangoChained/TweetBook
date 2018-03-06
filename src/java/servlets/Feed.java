@@ -23,6 +23,8 @@ import dao.TextPostDao;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -78,114 +80,105 @@ public class Feed extends HttpServlet {
             ArrayList<Human> users = humanDao.getFriends(friendshipDao.getFriends(human.getId()));
             users.add(human);
             
-            ArrayList<ArrayList<LikeActivity>> likes = new ArrayList<>();
-            ArrayList<ArrayList<DislikeActivity>> dislikes = new ArrayList<>();
-            ArrayList<ArrayList<TextPost>> textPosts = new ArrayList<>();
-            ArrayList<ArrayList<LinkPost>> linkPosts = new ArrayList<>();
-            ArrayList<ArrayList<FriendshipActivity>> friends = new ArrayList<>();
+            Map<Integer, LikeActivity> likes = new HashMap<>();
+            Map<Integer, DislikeActivity> dislikes = new HashMap<>();
+            Map<Integer, TextPost> textPosts = new HashMap<>();
+            Map<Integer, LinkPost> linkPosts = new HashMap<>();
+            Map<Integer, FriendshipActivity> friends = new HashMap<>();
+
             ArrayList<String> res = new ArrayList<>();
             
             for(Human curHuman : users){
-                likes.add(likeActivityDao.getByHuman(curHuman.getId()));
-                dislikes.add(dislikeActivityDao.getByHuman(curHuman.getId()));
-                textPosts.add(textPostDao.getByHuman(curHuman.getId()));
-                linkPosts.add(linkPostDao.getByHuman(curHuman.getId()));
-                friends.add(friendshipDao.getByHuman(curHuman.getId()));
+                likes.putAll(likeActivityDao.getHashByHuman(curHuman.getId()));
+                dislikes.putAll(dislikeActivityDao.getHashByHuman(curHuman.getId()));
+                textPosts.putAll(textPostDao.getHashByHuman(curHuman.getId()));
+                linkPosts.putAll(linkPostDao.getHashByHuman(curHuman.getId()));
+                friends.putAll(friendshipDao.getHashByHuman(curHuman.getId()));
             }
             
             out.print("{" +
                             "    \"status\": \"success\"," +
                             "    \"activities\": [");
-            for(ArrayList<LikeActivity> like : likes){
-                for(LikeActivity act : like){
-                    Human author = humanDao.get(act.getId_human());
-                    int post_author_id = -1;
-                    TextPost text = textPostDao.get(act.getId_post());
-                    if (text != null){
-                        post_author_id = text.getId_human();
-                    } else {
-                        LinkPost link = linkPostDao.get(act.getId_post());
-                        post_author_id = link.getId_human();
-                    }
-                    Human post_author = humanDao.get(post_author_id);
-                    res.add("{" +
-                                "   \"type\": \"reaction\", " +
-                                "   \"reaction\": \"like\", " +
-                                "   \"id\": \""+act.getId()+"\", " +
-                                "   \"date\": \""+act.getDate()+"\", " +
-                                "   \"id_post\": \""+act.getId_post()+"\", " +
-                                "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                                "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
-                                "}");
+            
+            for(Map.Entry<Integer, LikeActivity> like : likes.entrySet()) {
+                Human author = humanDao.get(like.getValue().getId_human());
+                int post_author_id = -1;
+                TextPost text = textPostDao.get(like.getValue().getId_post());
+                if (text != null){
+                    post_author_id = text.getId_human();
+                } else {
+                    LinkPost link = linkPostDao.get(like.getValue().getId_post());
+                    post_author_id = link.getId_human();
                 }
+                Human post_author = humanDao.get(post_author_id);
+                res.add("{" +
+                            "   \"type\": \"relike.getValue()ion\", " +
+                            "   \"relike.getValue()ion\": \"like\", " +
+                            "   \"id\": \""+like.getValue().getId()+"\", " +
+                            "   \"date\": \""+like.getValue().getDate()+"\", " +
+                            "   \"id_post\": \""+like.getValue().getId_post()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
+                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "}");
             }
-            for(ArrayList<DislikeActivity> dislike : dislikes){
-                for(DislikeActivity act : dislike){
-                    Human author = humanDao.get(act.getId_human());
-                    int post_author_id = -1;
-                    TextPost text = textPostDao.get(act.getId_post());
-                    if (text != null){
-                        post_author_id = text.getId_human();
-                    } else {
-                        LinkPost link = linkPostDao.get(act.getId_post());
-                        post_author_id = link.getId_human();
-                    }
-                    Human post_author = humanDao.get(post_author_id);
-                    res.add("{" +
-                                "   \"type\": \"reaction\", " +
-                                "   \"reaction\": \"dislike\", " +
-                                "   \"id\": \""+act.getId()+"\", " +
-                                "   \"date\": \""+act.getDate()+"\", " +
-                                "   \"id_post\": \""+act.getId_post()+"\", " +
-                                "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                                "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
-                                "}");
+            for(Map.Entry<Integer, DislikeActivity> dislike : dislikes.entrySet()) {
+                Human author = humanDao.get(dislike.getValue().getId_human());
+                int post_author_id = -1;
+                TextPost text = textPostDao.get(dislike.getValue().getId_post());
+                if (text != null){
+                    post_author_id = text.getId_human();
+                } else {
+                    LinkPost link = linkPostDao.get(dislike.getValue().getId_post());
+                    post_author_id = link.getId_human();
                 }
+                Human post_author = humanDao.get(post_author_id);
+                res.add("{" +
+                            "   \"type\": \"redislike.getValue()ion\", " +
+                            "   \"redislike.getValue()ion\": \"dislike\", " +
+                            "   \"id\": \""+dislike.getValue().getId()+"\", " +
+                            "   \"date\": \""+dislike.getValue().getDate()+"\", " +
+                            "   \"id_post\": \""+dislike.getValue().getId_post()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
+                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "}");
             }
-            for(ArrayList<TextPost> textPost : textPosts){
-                for(TextPost post : textPost){
-                    Human author = humanDao.get(post.getId_human());
-                    res.add("{" +
-                                "   \"type\": \"text\", " +
-                                "   \"id\": \""+post.getId()+"\", " +
-                                "   \"date\": \""+post.getDate()+"\", " +
-                                "   \"id_human\": \""+post.getId_human()+"\", " +
-                                "   \"content\": \""+post.getContent()+"\", " +
-                                "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
-                                "}");
-                }
+            for(Map.Entry<Integer, TextPost> textPost : textPosts.entrySet()) {
+                Human author = humanDao.get(textPost.getValue().getId_human());
+                res.add("{" +
+                            "   \"type\": \"text\", " +
+                            "   \"id\": \""+textPost.getValue().getId()+"\", " +
+                            "   \"date\": \""+textPost.getValue().getDate()+"\", " +
+                            "   \"id_human\": \""+textPost.getValue().getId_human()+"\", " +
+                            "   \"content\": \""+textPost.getValue().getContent()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "}");
             }
-            for(ArrayList<LinkPost> linkPost : linkPosts){
-                for(LinkPost post : linkPost) {
-                    Human author = humanDao.get(post.getId_human());
-                    res.add("{" +
-                                "   \"type\": \"link\", " +
-                                "   \"id\": \""+post.getId()+"\", " +
-                                "   \"date\": \""+post.getDate()+"\", " +
-                                "   \"id_human\": \""+post.getId_human()+"\", " +
-                                "   \"url\": \""+post.getUrl()+"\", " +
-                                "   \"title\": \""+post.getTitle()+"\", " +
-                                "   \"content\": \""+post.getContent()+"\", " +
-                                "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
-                                "}");
-                }
+            for(Map.Entry<Integer, LinkPost> linkPost : linkPosts.entrySet()) {
+                Human author = humanDao.get(linkPost.getValue().getId_human());
+                res.add("{" +
+                            "   \"type\": \"link\", " +
+                            "   \"id\": \""+linkPost.getValue().getId()+"\", " +
+                            "   \"date\": \""+linkPost.getValue().getDate()+"\", " +
+                            "   \"id_human\": \""+linkPost.getValue().getId_human()+"\", " +
+                            "   \"url\": \""+linkPost.getValue().getUrl()+"\", " +
+                            "   \"title\": \""+linkPost.getValue().getTitle()+"\", " +
+                            "   \"content\": \""+linkPost.getValue().getContent()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "}");
             }
-            for(ArrayList<FriendshipActivity> friend : friends){
-                for(FriendshipActivity act : friend){
-                    Human author = humanDao.get(act.getId_human());
-                    Human author_friend = humanDao.get(act.getId_second_human());
-                    res.add("{" +
-                                "   \"type\": \"friend\", " +
-                                "   \"id\": \""+act.getId()+"\", " +
-                                "   \"date\": \""+act.getDate()+"\", " +
-                                "   \"id_human\": \""+act.getId_human()+"\", " +
-                                "   \"id_friend\": \""+act.getId_second_human()+"\", " +
-                                "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                                "   \"othername\": \""+author_friend.getFirstName()+" "+author_friend.getLastName()+"\" " +
-                                "}");
-                }
+            for(Map.Entry<Integer, FriendshipActivity> friend : friends.entrySet()) {
+                Human author = humanDao.get(friend.getValue().getId_human());
+                Human author_friend = humanDao.get(friend.getValue().getId_second_human());
+                res.add("{" +
+                            "   \"type\": \"friend\", " +
+                            "   \"id\": \""+friend.getValue().getId()+"\", " +
+                            "   \"date\": \""+friend.getValue().getDate()+"\", " +
+                            "   \"id_human\": \""+friend.getValue().getId_human()+"\", " +
+                            "   \"id_friend\": \""+friend.getValue().getId_second_human()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
+                            "   \"othername\": \""+author_friend.getFirstName()+" "+author_friend.getLastName()+"\" " +
+                            "}");            out.print(String.join(",", res));
             }
-            out.print(String.join(",", res));
             out.print("]}");
         } catch (DAOException e){
             out.println("{\"status\": \"error\"}");   

@@ -25,6 +25,7 @@
             <servlet-name>UpdatePassword</servlet-name>
             <servlet-name>Wall</servlet-name>
             <servlet-name>Reaction</servlet-name>
+            <servlet-name>Feed</servlet-name>
     </filter-mapping>
 
 </web-app>
