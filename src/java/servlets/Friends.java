@@ -15,7 +15,7 @@ import dao.HumanDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.servlet.ServletException;
@@ -66,20 +66,11 @@ public class Friends extends HttpServlet {
         out.print("{\"status\": \"success\"," +
                   "    \"friends\": [");
         for(Human friend : friends){
-                res.add("{" +
-                            "   \"id\": \""+friend.getId()+"\", " +
-                            "   \"fristname\": \""+friend.getFirstName()+"\", " +
-                            "   \"lastname\": \""+friend.getLastName()+"\" " +
-                            "}");
+            res.add("{" +
+                    "   \"id\": \""+friend.getId()+"\", " +
+                    "   \"name\": \""+friend.getFirstName()+" "+friend.getLastName()+"\"}");
         }
-        int i = 0;
-        for (String s : res){
-            if(i++ == res.size() - 1){
-                out.print(s);
-            } else {
-                out.print(s+",");
-            }
-        }
+        out.print(String.join(",", res));
         out.print("]}");
 }
 
@@ -100,12 +91,12 @@ public class Friends extends HttpServlet {
         
         try {
                 FriendshipActivity act = new FriendshipActivity();
-                act.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                act.setDate(LocalDateTime.now());
                 act.setId_human(human.getId());
                 act.setId_second_human(Integer.parseInt(data.getProperty("id_friend")));
                 friendshipDao.create(act);
 
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de la relation d'ami\"}");
             }
@@ -131,8 +122,11 @@ public class Friends extends HttpServlet {
             friendshipDao.delete(id_friendship_activity);
 
             out.println("{\"status\": \"success\"}");
+        } catch (NullPointerException e) {
+            out.println("{\"status\": \"error\",\"message\": \"Aucune relation d'amitié à supprimer.\"}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de l'amitié\"}");
+            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la suppression de l'amitié. "+e.getMessage()+"\"}");
+            throw e;
         }
     }
 

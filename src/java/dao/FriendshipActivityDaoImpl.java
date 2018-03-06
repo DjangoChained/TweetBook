@@ -40,7 +40,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id_human, id_second_human) VALUES (?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id, id_second_human) VALUES (?, ?)";
     @Override
     public FriendshipActivity create(FriendshipActivity activity) throws DAOException {
         Connection connexion = null;
@@ -189,7 +189,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human, id_friend, id_friend );
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_friend );
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 id_friendship_activity = resultSet.getInt("id");

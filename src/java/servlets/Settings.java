@@ -36,15 +36,7 @@ public class Settings extends HttpServlet {
         
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,17 +46,18 @@ public class Settings extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {
             out.println("{\n" +
-                                "    \"status\": \"success\",\n" +
-                                "    \"user\": {\n" +
-                            "        \"id\": \""+human.getId()+"\",\n" +
-                            "        \"firstName\": \""+human.getFirstName()+"\",\n" +
-                            "        \"lastName\": \""+human.getLastName()+"\",\n" +
-                            "        \"birthdate\": \""+human.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
-                            "        \"email\": \""+human.getEmail()+"\",\n" +
-                            "        \"username\": \""+human.getUsername()+"\"\n" +
-                            "        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
-                            "    }\n" +
-                            "}");
+                        "    \"status\": \"success\",\n" +
+                        "    \"user\": {\n" +
+                        "        \"id\": \""+human.getId()+"\",\n" +
+                        "        \"firstName\": \""+human.getFirstName()+"\",\n" +
+                        "        \"lastName\": \""+human.getLastName()+"\",\n" +
+                        "        \"birthdate\": \""+human.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
+                        "        \"email\": \""+human.getEmail()+"\",\n" +
+                        "        \"username\": \""+human.getUsername()+"\",\n" +
+                        //"        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
+                        "        \"visibility\": \"author\"\n" +
+                        "    }\n" +
+                        "}");
         }
     }
     
