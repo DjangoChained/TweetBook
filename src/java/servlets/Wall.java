@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.DislikeActivity;
@@ -25,6 +20,7 @@ import dao.TextPostDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -180,7 +176,7 @@ public class Wall extends HttpServlet {
         if (data.getProperty("type").equals("text")){
             try {
                 TextPost post = new TextPost();
-                post.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                post.setDate(LocalDateTime.now());
                 post.setId_human(human.getId());
                 post.setContent(data.getProperty("content"));
                 textPostDao.create(post);
@@ -192,7 +188,7 @@ public class Wall extends HttpServlet {
         } else if (data.getProperty("type").equals("link")){
             try {
                 LinkPost post = new LinkPost();
-                post.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                post.setDate(LocalDateTime.now());
                 post.setId_human(human.getId());
                 post.setContent(data.getProperty("content"));
                 post.setTitle(data.getProperty("title"));
@@ -206,7 +202,7 @@ public class Wall extends HttpServlet {
         } else if (data.getProperty("type").equals("photo")){
             try {
                 PhotoPost post = new PhotoPost();
-                post.setDate(ZonedDateTime.parse(data.getProperty("date")).toLocalDateTime());
+                post.setDate(LocalDateTime.now());
                 post.setId_human(human.getId());
                 post.setContent(data.getProperty("content"));
                 post.setPhotoPath(data.getProperty("photopath"));
