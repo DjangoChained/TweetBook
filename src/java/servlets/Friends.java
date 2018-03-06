@@ -119,9 +119,12 @@ public class Friends extends HttpServlet {
         
         try {
             int id_friendship_activity = friendshipDao.getByFriends(human.getId(), Integer.parseInt(data.getProperty("id_friend")));
-            friendshipDao.delete(id_friendship_activity);
-
-            out.println("{\"status\": \"success\"}");
+            if (id_friendship_activity == -1){
+              out.println("{\"status\": \"error\",\"message\": \"Aucune relation d'amitié à supprimer.\"}");  
+            } else {
+                friendshipDao.delete(id_friendship_activity);
+                out.println("{\"status\": \"success\"}");
+            }
         } catch (NullPointerException e) {
             out.println("{\"status\": \"error\",\"message\": \"Aucune relation d'amitié à supprimer.\"}");
         } catch (DAOException e){

@@ -89,7 +89,7 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE a.id = ?";
     @Override
     public TextPost get(int id) throws DAOException {
         Connection connexion = null;
