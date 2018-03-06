@@ -35,12 +35,13 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         human.setBirthDate( result.getTimestamp("birthdate").toLocalDateTime());
         human.setEmail( result.getString( "email" ) );
         human.setUsername( result.getString( "username" ) );
-        human.setPassword( result.getString( "password" ) );  
+        human.setPassword( result.getString( "password" ) );
+        human.setVisibility(ActivityVisibility.valueOf(result.getString( "activityvisibility")));
         
         return human;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password, activityvisibility) VALUES (?, ?, ?, ?, ?, ?, ?::activityvisibility)";
     @Override
     public void create(Human human) throws DAOException {
         Connection connexion = null;
@@ -51,7 +52,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), Timestamp.valueOf(human.getBirthDate()),
-                                                               human.getEmail(), human.getUsername(), human.getPassword());
+                                                               human.getEmail(), human.getUsername(), human.getPassword(), human.getVisibility().toString());
             int status = preparedStatement.executeUpdate();
             /* Analyse du statut retourné par la requête d'insertion */
             if ( status == 0 ) {
@@ -71,7 +72,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         }
     }
     
-    private static final String SQL_SELECT_ALL = "SELECT id, lastname, firstname, birthdate, email, username, password FROM human";
+    private static final String SQL_SELECT_ALL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human";
     @Override
     public ArrayList<Human> getAll() throws DAOException {
         Connection connexion = null;
@@ -97,7 +98,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         return humans;
     }
     
-    private static final String SQL_SELECT_BY_ID = "SELECT id, lastname, firstname, birthdate, email, username, password FROM human WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE id = ?";
     @Override
     public Human get(int id) throws DAOException {
         Connection connexion = null;
@@ -123,7 +124,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         return human;
     }
     
-    private static final String SQL_SELECT_BY_EMAIL = "SELECT id, lastname, firstname, birthdate, email, username, password FROM human WHERE email = ?";
+    private static final String SQL_SELECT_BY_EMAIL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE email = ?";
     @Override
     public Human get(String email) throws DAOException {
         Connection connexion = null;
@@ -175,7 +176,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
             else if (human.getVisibility() == ActivityVisibility.friends)
                 visibility = "friends";
             preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
-                                                               human.getEmail(), human.getUsername(), human.getVisibility(), human.getId());
+                                                               human.getEmail(), human.getUsername(), human.getVisibility().toString(), human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
