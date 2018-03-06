@@ -98,7 +98,7 @@ public class LinkPostDaoImpl extends BasicDaoImpl implements LinkPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE a.id = ?";
     @Override
     public LinkPost get(int id) throws DAOException {
         Connection connexion = null;

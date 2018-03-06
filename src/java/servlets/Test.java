@@ -76,6 +76,7 @@ public class Test extends HttpServlet {
         this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );*/
         PrintWriter out = response.getWriter();
         
-        out.println(friendshipDao.getByFriends(2, 1));
+        //out.println(friendshipDao.getByFriends(2, 1));
+        out.println(textPostDao.get(1));
     }
 }
