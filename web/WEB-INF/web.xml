@@ -1,30 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-	 version="3.1">
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <session-config>
-        <session-timeout>-1</session-timeout>
+        <session-timeout>60</session-timeout>
     </session-config>
-    
     <listener>
+        <description>Permet l'initialisation de la classe singleton DaoFactory fournissant les fonctionnalités d'accès aux données de l'application.</description>
         <listener-class>config.InitialiseDaoFactory</listener-class>
     </listener>
-    
+    <description>Réseau social DA2I</description>
+    <display-name>TweetBook</display-name>
+    <context-param>
+        <description>URL de connexion à la base de données JDBC</description>
+        <param-name>jdbc-url</param-name>
+        <param-value>jdbc:postgresql://horton.elephantsql.com:5432/beyocvrp</param-value>
+    </context-param>
+    <context-param>
+        <description>Driver JDBC utilisé pour la connexion à la base de données</description>
+        <param-name>jdbc-driver</param-name>
+        <param-value>org.postgresql.Driver</param-value>
+    </context-param>
+    <context-param>
+        <description>Nom d'utilisateur qu'utilisera TweetBook pour se connecter à la base de données</description>
+        <param-name>jdbc-username</param-name>
+        <param-value>beyocvrp</param-value>
+    </context-param>
+    <context-param>
+        <description>Mot de passe associé au nom d'utilisateur pour la connexion à la base de données.</description>
+        <param-name>jdbc-password</param-name>
+        <param-value>VP-P9VMsQSCpiCXD-0OsYeCAWDNPfvcl</param-value>
+    </context-param>
     <filter>
-	<filter-name>RestrictionFilter</filter-name>
-	<filter-class>filters.RestrictionFilter</filter-class>
+        <description>Filtre assurant la restriction de certaines portions de l'API JSON aux seuls utilisateurs authentifiés.</description>
+        <filter-name>RestrictionFilter</filter-name>
+        <filter-class>filters.RestrictionFilter</filter-class>
     </filter>
     <filter-mapping>
-            <filter-name>RestrictionFilter</filter-name>
-            <servlet-name>getHuman</servlet-name>
-            <servlet-name>getPost</servlet-name>
-            <servlet-name>Logout</servlet-name>
-            <servlet-name>Settings</servlet-name>
-            <servlet-name>UpdatePassword</servlet-name>
-            <servlet-name>Wall</servlet-name>
-            <servlet-name>Reaction</servlet-name>
+        <filter-name>RestrictionFilter</filter-name>
+        <servlet-name>getHuman</servlet-name>
+        <servlet-name>getPost</servlet-name>
+        <servlet-name>Logout</servlet-name>
+        <servlet-name>Settings</servlet-name>
+        <servlet-name>UpdatePassword</servlet-name>
+        <servlet-name>Wall</servlet-name>
+        <servlet-name>Reaction</servlet-name>
     </filter-mapping>
-
 </web-app>
