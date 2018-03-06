@@ -5,6 +5,7 @@
  */
 package servlets;
 
+import beans.ActivityVisibility;
 import beans.Human;
 import beans.Post;
 import beans.TextPost;
@@ -77,7 +78,17 @@ public class Test extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         //out.println(friendshipDao.getByFriends(2, 1));
-        TextPost test = textPostDao.get(1);
-        out.println(test);
+        //TextPost test = textPostDao.get(1);
+        //out.println(test);
+        Human human = new Human();
+        human.setFirstName("Hervé");
+        human.setLastName("Cantineau");
+        human.setBirthDate("1994-05-05");
+        human.setEmail("ok@ok.fr");
+        human.setUsername("MrC");
+        human.setPassword("");
+        human.setVisibility(ActivityVisibility.authoronly);
+        humanDao.create(human);
+        out.println("entré dans test");
     }
 }

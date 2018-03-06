@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,11 +55,20 @@ public class Wall extends HttpServlet {
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
     }
 
+    private static final HashMap<Integer, String> names = new HashMap<>();
+    private String getHumanName(int id) {
+        if(!names.containsKey(id)) {
+            Human h = humanDao.get(id);
+            names.put(id, h.getFirstName() + " " + h.getLastName());
+        }
+        return names.get(id);
+    }
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        names.clear();
         response.setContentType("application/json");
-        
         PrintWriter out = response.getWriter();
         
         try {
@@ -74,7 +84,6 @@ public class Wall extends HttpServlet {
                             "    \"status\": \"success\"," +
                             "    \"activities\": [");
             for(LikeActivity act : likes){
-                Human author = humanDao.get(act.getId_human());
                 int post_author_id = -1;
                 TextPost text = textPostDao.get(act.getId_post());
                 if (text != null){
@@ -83,19 +92,17 @@ public class Wall extends HttpServlet {
                     LinkPost link = linkPostDao.get(act.getId_post());
                     post_author_id = link.getId_human();
                 }
-                Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"reaction\", " +
                             "   \"reaction\": \"like\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(act.getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
                             "}");
             }
             for(DislikeActivity act : dislikes){
-                Human author = humanDao.get(act.getId_human());
                 int post_author_id = -1;
                 TextPost text = textPostDao.get(act.getId_post());
                 if (text != null){
@@ -104,30 +111,27 @@ public class Wall extends HttpServlet {
                     LinkPost link = linkPostDao.get(act.getId_post());
                     post_author_id = link.getId_human();
                 }
-                Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"reaction\", " +
                             "   \"reaction\": \"dislike\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_post\": \""+act.getId_post()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(act.getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
                             "}");
             }
             for(TextPost post : textPosts){
-                Human author = humanDao.get(post.getId_human());
                 res.add("{" +
                             "   \"type\": \"text\", " +
                             "   \"id\": \""+post.getId()+"\", " +
                             "   \"date\": \""+post.getDate()+"\", " +
                             "   \"id_human\": \""+post.getId_human()+"\", " +
                             "   \"content\": \""+post.getContent()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(post.getId_human())+"\" " +
                             "}");
             }
             for(LinkPost post : linkPosts) {
-                Human author = humanDao.get(post.getId_human());
                 res.add("{" +
                             "   \"type\": \"link\", " +
                             "   \"id\": \""+post.getId()+"\", " +
@@ -136,20 +140,18 @@ public class Wall extends HttpServlet {
                             "   \"url\": \""+post.getUrl()+"\", " +
                             "   \"title\": \""+post.getTitle()+"\", " +
                             "   \"content\": \""+post.getContent()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(post.getId_human())+"\" " +
                             "}");
             }
             for(FriendshipActivity act : friends){
-                Human author = humanDao.get(act.getId_human());
-                Human friend = humanDao.get(act.getId_second_human());
                 res.add("{" +
                             "   \"type\": \"friend\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
                             "   \"id_friend\": \""+act.getId_second_human()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+friend.getFirstName()+" "+friend.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(act.getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(act.getId_second_human())+"\" " +
                             "}");
             }
             out.print(String.join(",", res));
