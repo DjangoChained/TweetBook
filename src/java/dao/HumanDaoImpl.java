@@ -159,9 +159,6 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
 
         return humans;
     }
-   
-    return humans;
-}
     
     private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, activityvisibility = ?::activityvisibility WHERE id = ?";
     @Override
