@@ -189,7 +189,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_friend );
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_FRIENDS, false, id_human, id_human, id_friend, id_friend );
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 id_friendship_activity = resultSet.getInt("id");

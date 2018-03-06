@@ -9,6 +9,7 @@ import beans.Human;
 import beans.Post;
 import beans.TextPost;
 import dao.DAOFactory;
+import dao.FriendshipActivityDao;
 import dao.HumanDao;
 import dao.HumanDaoImpl;
 import dao.TextPostDao;
@@ -37,14 +38,17 @@ public class Test extends HttpServlet {
 
     private HumanDao humanDao;
     private TextPostDao textPostDao;
+    private FriendshipActivityDao friendshipDao;
 
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
         this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
     }
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
-        
+        log("entré dans test");
+        System.out.println("entré dans test");
         /*Human human = new Human();
         human.setId(3);
         human.setFirstName("Hervé");
@@ -66,9 +70,12 @@ public class Test extends HttpServlet {
         textPost.create(post);*/
         
         //ArrayList<Post> posts = textPostDao.getAll();
-        Human human = humanDao.get(10);
+        /*Human human = humanDao.get(10);
         System.out.println(human.getBirthDate());
         
-        this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );
+        this.getServletContext().getRequestDispatcher( VUE ).forward( request, response );*/
+        PrintWriter out = response.getWriter();
+        
+        out.println(friendshipDao.getByFriends(2, 1));
     }
 }
