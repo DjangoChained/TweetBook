@@ -93,9 +93,9 @@ public class Wall extends HttpServlet {
                             "   \"reaction\": \"like\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
-                            "   \"id_post\": \""+act.getId_post()+"\" " +
-                            "   \"author_name\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
-                            "   \"post_author_name\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"id_post\": \""+act.getId_post()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
+                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
                             "}");
             }
             for(DislikeActivity act : dislikes){
@@ -114,9 +114,9 @@ public class Wall extends HttpServlet {
                             "   \"reaction\": \"dislike\", " +
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
-                            "   \"id_post\": \""+act.getId_post()+"\" " +
-                            "   \"author_name\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
-                            "   \"post_author_name\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"id_post\": \""+act.getId_post()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
+                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
                             "}");
             }
             for(TextPost post : textPosts){
@@ -126,8 +126,8 @@ public class Wall extends HttpServlet {
                             "   \"id\": \""+post.getId()+"\", " +
                             "   \"date\": \""+post.getDate()+"\", " +
                             "   \"id_human\": \""+post.getId_human()+"\", " +
-                            "   \"content\": \""+post.getContent()+"\" " +
-                            "   \"author_name\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"content\": \""+post.getContent()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
                             "}");
             }
             for(LinkPost post : linkPosts) {
@@ -139,8 +139,8 @@ public class Wall extends HttpServlet {
                             "   \"id_human\": \""+post.getId_human()+"\", " +
                             "   \"url\": \""+post.getUrl()+"\", " +
                             "   \"title\": \""+post.getTitle()+"\", " +
-                            "   \"content\": \""+post.getContent()+"\" " +
-                            "   \"author_name\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"content\": \""+post.getContent()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
                             "}");
             }
             for(FriendshipActivity act : friends){
@@ -151,8 +151,8 @@ public class Wall extends HttpServlet {
                             "   \"id\": \""+act.getId()+"\", " +
                             "   \"date\": \""+act.getDate()+"\", " +
                             "   \"id_human\": \""+act.getId_human()+"\", " +
-                            "   \"id_friend\": \""+act.getId_second_human()+"\" " +
-                            "   \"author_name\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"id_friend\": \""+act.getId_second_human()+"\", " +
+                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
                             "   \"friend_name\": \""+friend.getFirstName()+" "+friend.getLastName()+"\" " +
                             "}");
             }
