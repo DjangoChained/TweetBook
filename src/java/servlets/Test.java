@@ -77,6 +77,7 @@ public class Test extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         //out.println(friendshipDao.getByFriends(2, 1));
-        out.println(textPostDao.get(1));
+        TextPost test = textPostDao.get(1);
+        out.println(test);
     }
 }
