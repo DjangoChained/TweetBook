@@ -79,16 +79,15 @@ public class Test extends HttpServlet {
         
         //out.println(friendshipDao.getByFriends(2, 1));
         //TextPost test = textPostDao.get(1);
-        //out.println(test);
+        out.println("entré dans test");
         Human human = new Human();
         human.setFirstName("Hervé");
         human.setLastName("Cantineau");
         human.setBirthDate("1994-05-05");
-        human.setEmail("ok@ok.fr");
+        human.setEmail("canti@macon.fr");
         human.setUsername("MrC");
-        human.setPassword("");
+        human.setPassword("sdfqsdmlfkjqsdml");
         human.setVisibility(ActivityVisibility.authoronly);
         humanDao.create(human);
-        out.println("entré dans test");
     }
 }

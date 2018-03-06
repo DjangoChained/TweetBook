@@ -54,8 +54,7 @@ public class Settings extends HttpServlet {
                         "        \"birthdate\": \""+human.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
                         "        \"email\": \""+human.getEmail()+"\",\n" +
                         "        \"username\": \""+human.getUsername()+"\",\n" +
-                        //"        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
-                        "        \"visibility\": \"author\"\n" +
+                        "        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
                         "    }\n" +
                         "}");
         }

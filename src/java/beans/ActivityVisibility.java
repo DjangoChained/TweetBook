@@ -2,9 +2,9 @@ package beans;
 
 public enum ActivityVisibility {
     
-    authoronly ("vous"),
-    friends("amis"),
-    all("tout le monde");
+    authoronly ("authoronly"),
+    friends("friends"),
+    all("all");
     
     private String name = "";
 
