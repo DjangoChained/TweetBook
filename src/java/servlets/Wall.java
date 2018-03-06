@@ -180,8 +180,7 @@ public class Wall extends HttpServlet {
                 post.setId_human(human.getId());
                 post.setContent(data.getProperty("content"));
                 textPostDao.create(post);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
@@ -194,8 +193,7 @@ public class Wall extends HttpServlet {
                 post.setTitle(data.getProperty("title"));
                 post.setUrl(data.getProperty("url"));
                 linkPostDao.create(post);
-
-                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
@@ -208,7 +206,7 @@ public class Wall extends HttpServlet {
                 post.setPhotoPath(data.getProperty("photopath"));
                 photoPostDao.create(post);
 
-                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
+                out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
             }
