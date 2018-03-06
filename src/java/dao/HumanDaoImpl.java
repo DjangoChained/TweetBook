@@ -155,7 +155,9 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         ArrayList<Human> humans = new ArrayList<>();
 
         for (Integer id: friends_ids) {
-            humans.add(this.get(id));
+            Human h = this.get(id);
+            if(h.getVisibility() != ActivityVisibility.authoronly)
+                humans.add(h);
         }
 
         return humans;
