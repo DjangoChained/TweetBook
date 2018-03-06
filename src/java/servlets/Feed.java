@@ -110,7 +110,6 @@ public class Feed extends HttpServlet {
                             "    \"activities\": [");
             
             for(Map.Entry<Integer, LikeActivity> like : likes.entrySet()) {
-                Human author = humanDao.get(like.getValue().getId_human());
                 int post_author_id = -1;
                 TextPost text = textPostDao.get(like.getValue().getId_post());
                 if (text != null){
@@ -119,19 +118,17 @@ public class Feed extends HttpServlet {
                     LinkPost link = linkPostDao.get(like.getValue().getId_post());
                     post_author_id = link.getId_human();
                 }
-                Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"relike.getValue()ion\", " +
                             "   \"relike.getValue()ion\": \"like\", " +
                             "   \"id\": \""+like.getValue().getId()+"\", " +
                             "   \"date\": \""+like.getValue().getDate()+"\", " +
                             "   \"id_post\": \""+like.getValue().getId_post()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(like.getValue().getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
                             "}");
             }
             for(Map.Entry<Integer, DislikeActivity> dislike : dislikes.entrySet()) {
-                Human author = humanDao.get(dislike.getValue().getId_human());
                 int post_author_id = -1;
                 TextPost text = textPostDao.get(dislike.getValue().getId_post());
                 if (text != null){
@@ -140,30 +137,27 @@ public class Feed extends HttpServlet {
                     LinkPost link = linkPostDao.get(dislike.getValue().getId_post());
                     post_author_id = link.getId_human();
                 }
-                Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"redislike.getValue()ion\", " +
                             "   \"redislike.getValue()ion\": \"dislike\", " +
                             "   \"id\": \""+dislike.getValue().getId()+"\", " +
                             "   \"date\": \""+dislike.getValue().getDate()+"\", " +
                             "   \"id_post\": \""+dislike.getValue().getId_post()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+post_author.getFirstName()+" "+post_author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(dislike.getValue().getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
                             "}");
             }
             for(Map.Entry<Integer, TextPost> textPost : textPosts.entrySet()) {
-                Human author = humanDao.get(textPost.getValue().getId_human());
                 res.add("{" +
                             "   \"type\": \"text\", " +
                             "   \"id\": \""+textPost.getValue().getId()+"\", " +
                             "   \"date\": \""+textPost.getValue().getDate()+"\", " +
                             "   \"id_human\": \""+textPost.getValue().getId_human()+"\", " +
                             "   \"content\": \""+textPost.getValue().getContent()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(textPost.getValue().getId_human())+"\" " +
                             "}");
             }
             for(Map.Entry<Integer, LinkPost> linkPost : linkPosts.entrySet()) {
-                Human author = humanDao.get(linkPost.getValue().getId_human());
                 res.add("{" +
                             "   \"type\": \"link\", " +
                             "   \"id\": \""+linkPost.getValue().getId()+"\", " +
@@ -172,20 +166,18 @@ public class Feed extends HttpServlet {
                             "   \"url\": \""+linkPost.getValue().getUrl()+"\", " +
                             "   \"title\": \""+linkPost.getValue().getTitle()+"\", " +
                             "   \"content\": \""+linkPost.getValue().getContent()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(linkPost.getValue().getId_human())+"\" " +
                             "}");
             }
             for(Map.Entry<Integer, FriendshipActivity> friend : friends.entrySet()) {
-                Human author = humanDao.get(friend.getValue().getId_human());
-                Human author_friend = humanDao.get(friend.getValue().getId_second_human());
                 res.add("{" +
                             "   \"type\": \"friend\", " +
                             "   \"id\": \""+friend.getValue().getId()+"\", " +
                             "   \"date\": \""+friend.getValue().getDate()+"\", " +
                             "   \"id_human\": \""+friend.getValue().getId_human()+"\", " +
                             "   \"id_friend\": \""+friend.getValue().getId_second_human()+"\", " +
-                            "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"othername\": \""+author_friend.getFirstName()+" "+author_friend.getLastName()+"\" " +
+                            "   \"authorname\": \""+getHumanName(friend.getValue().getId_human())+"\", " +
+                            "   \"othername\": \""+getHumanName(friend.getValue().getId_human())+"\" " +
                             "}");            out.print(String.join(",", res));
             }
             out.print("]}");

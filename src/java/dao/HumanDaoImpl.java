@@ -40,7 +40,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
         return human;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password, visibility) VALUES (?, ?, ?, ?, ?, ?, ?::activityvisibility)";
     @Override
     public void create(Human human) throws DAOException {
         Connection connexion = null;
@@ -51,7 +51,7 @@ public class HumanDaoImpl extends BasicDaoImpl implements HumanDao {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
             preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), Timestamp.valueOf(human.getBirthDate()),
-                                                               human.getEmail(), human.getUsername(), human.getPassword());
+                                                               human.getEmail(), human.getUsername(), human.getPassword(), human.getVisibility());
             int status = preparedStatement.executeUpdate();
             /* Analyse du statut retourné par la requête d'insertion */
             if ( status == 0 ) {
