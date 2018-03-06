@@ -59,6 +59,15 @@ public class Feed extends HttpServlet {
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
     }
 
+    private static final HashMap<Integer, String> names = new HashMap<>();
+    private String getHumanName(int id) {
+        if(!names.containsKey(id)) {
+            Human h = humanDao.get(id);
+            names.put(id, h.getFirstName() + " " + h.getLastName());
+        }
+        return names.get(id);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -72,7 +81,7 @@ public class Feed extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        
+        names.clear();
         PrintWriter out = response.getWriter();
         
         try {

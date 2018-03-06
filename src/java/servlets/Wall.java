@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,11 +55,20 @@ public class Wall extends HttpServlet {
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
     }
 
+    private static final HashMap<Integer, String> names = new HashMap<>();
+    private String getHumanName(int id) {
+        if(!names.containsKey(id)) {
+            Human h = humanDao.get(id);
+            names.put(id, h.getFirstName() + " " + h.getLastName());
+        }
+        return names.get(id);
+    }
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        names.clear();
         response.setContentType("application/json");
-        
         PrintWriter out = response.getWriter();
         
         try {
