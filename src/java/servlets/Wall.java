@@ -153,7 +153,7 @@ public class Wall extends HttpServlet {
                             "   \"id_human\": \""+act.getId_human()+"\", " +
                             "   \"id_friend\": \""+act.getId_second_human()+"\", " +
                             "   \"authorname\": \""+author.getFirstName()+" "+author.getLastName()+"\", " +
-                            "   \"friend_name\": \""+friend.getFirstName()+" "+friend.getLastName()+"\" " +
+                            "   \"othername\": \""+friend.getFirstName()+" "+friend.getLastName()+"\" " +
                             "}");
             }
             out.print(String.join(",", res));
