@@ -43,7 +43,7 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?::reaction, ?)";
     @Override
     public LikeActivity create(LikeActivity activity) throws DAOException {
         Connection connexion = null;

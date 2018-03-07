@@ -105,10 +105,6 @@ public class Feed extends HttpServlet {
                 friends.putAll(friendshipDao.getHashByHuman(curHuman.getId()));
             }
             
-            out.print("{" +
-                            "    \"status\": \"success\"," +
-                            "    \"activities\": [");
-            
             for(Map.Entry<Integer, LikeActivity> like : likes.entrySet()) {
                 int post_author_id = -1;
                 TextPost text = textPostDao.get(like.getValue().getId_post());
@@ -118,15 +114,13 @@ public class Feed extends HttpServlet {
                     LinkPost link = linkPostDao.get(like.getValue().getId_post());
                     post_author_id = link.getId_human();
                 }
-                res.add("{" +
-                            "   \"type\": \"relike.getValue()ion\", " +
-                            "   \"relike.getValue()ion\": \"like\", " +
-                            "   \"id\": \""+like.getValue().getId()+"\", " +
-                            "   \"date\": \""+like.getValue().getDate()+"\", " +
-                            "   \"id_post\": \""+like.getValue().getId_post()+"\", " +
-                            "   \"authorname\": \""+getHumanName(like.getValue().getId_human())+"\", " +
-                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
-                            "}");
+                res.add("{\"type\": \"relike.getValue()ion\", " +
+                            "\"relike.getValue()ion\": \"like\", " +
+                            "\"id\": \""+like.getValue().getId()+"\", " +
+                            "\"date\": \""+like.getValue().getDate()+"\", " +
+                            "\"id_post\": \""+like.getValue().getId_post()+"\", " +
+                            "\"authorname\": \""+getHumanName(like.getValue().getId_human())+"\", " +
+                            "\"othername\": \""+getHumanName(post_author_id)+"\"}");
             }
             for(Map.Entry<Integer, DislikeActivity> dislike : dislikes.entrySet()) {
                 int post_author_id = -1;
@@ -137,49 +131,44 @@ public class Feed extends HttpServlet {
                     LinkPost link = linkPostDao.get(dislike.getValue().getId_post());
                     post_author_id = link.getId_human();
                 }
-                res.add("{" +
-                            "   \"type\": \"redislike.getValue()ion\", " +
-                            "   \"redislike.getValue()ion\": \"dislike\", " +
-                            "   \"id\": \""+dislike.getValue().getId()+"\", " +
-                            "   \"date\": \""+dislike.getValue().getDate()+"\", " +
-                            "   \"id_post\": \""+dislike.getValue().getId_post()+"\", " +
-                            "   \"authorname\": \""+getHumanName(dislike.getValue().getId_human())+"\", " +
-                            "   \"othername\": \""+getHumanName(post_author_id)+"\" " +
-                            "}");
+                res.add("{\"type\": \"redislike.getValue()ion\", " +
+                            "\"redislike.getValue()ion\": \"dislike\", " +
+                            "\"id\": \""+dislike.getValue().getId()+"\", " +
+                            "\"date\": \""+dislike.getValue().getDate()+"\", " +
+                            "\"id_post\": \""+dislike.getValue().getId_post()+"\", " +
+                            "\"authorname\": \""+getHumanName(dislike.getValue().getId_human())+"\", " +
+                            "\"othername\": \""+getHumanName(post_author_id)+"\"}");
             }
             for(Map.Entry<Integer, TextPost> textPost : textPosts.entrySet()) {
-                res.add("{" +
-                            "   \"type\": \"text\", " +
-                            "   \"id\": \""+textPost.getValue().getId()+"\", " +
-                            "   \"date\": \""+textPost.getValue().getDate()+"\", " +
-                            "   \"id_human\": \""+textPost.getValue().getId_human()+"\", " +
-                            "   \"content\": \""+textPost.getValue().getContent()+"\", " +
-                            "   \"authorname\": \""+getHumanName(textPost.getValue().getId_human())+"\" " +
-                            "}");
+                res.add("{\"type\": \"text\", " +
+                            "\"id\": \""+textPost.getValue().getId()+"\", " +
+                            "\"date\": \""+textPost.getValue().getDate()+"\", " +
+                            "\"id_human\": \""+textPost.getValue().getId_human()+"\", " +
+                            "\"content\": \""+textPost.getValue().getContent()+"\", " +
+                            "\"authorname\": \""+getHumanName(textPost.getValue().getId_human())+"\"}");
             }
             for(Map.Entry<Integer, LinkPost> linkPost : linkPosts.entrySet()) {
-                res.add("{" +
-                            "   \"type\": \"link\", " +
-                            "   \"id\": \""+linkPost.getValue().getId()+"\", " +
-                            "   \"date\": \""+linkPost.getValue().getDate()+"\", " +
-                            "   \"id_human\": \""+linkPost.getValue().getId_human()+"\", " +
-                            "   \"url\": \""+linkPost.getValue().getUrl()+"\", " +
-                            "   \"title\": \""+linkPost.getValue().getTitle()+"\", " +
-                            "   \"content\": \""+linkPost.getValue().getContent()+"\", " +
-                            "   \"authorname\": \""+getHumanName(linkPost.getValue().getId_human())+"\" " +
-                            "}");
+                res.add("{\"type\": \"link\", " +
+                            "\"id\": \""+linkPost.getValue().getId()+"\", " +
+                            "\"date\": \""+linkPost.getValue().getDate()+"\", " +
+                            "\"id_human\": \""+linkPost.getValue().getId_human()+"\", " +
+                            "\"url\": \""+linkPost.getValue().getUrl()+"\", " +
+                            "\"title\": \""+linkPost.getValue().getTitle()+"\", " +
+                            "\"content\": \""+linkPost.getValue().getContent()+"\", " +
+                            "\"authorname\": \""+getHumanName(linkPost.getValue().getId_human())+"\"}");
             }
             for(Map.Entry<Integer, FriendshipActivity> friend : friends.entrySet()) {
-                res.add("{" +
-                            "   \"type\": \"friend\", " +
-                            "   \"id\": \""+friend.getValue().getId()+"\", " +
-                            "   \"date\": \""+friend.getValue().getDate()+"\", " +
-                            "   \"id_human\": \""+friend.getValue().getId_human()+"\", " +
-                            "   \"id_friend\": \""+friend.getValue().getId_second_human()+"\", " +
-                            "   \"authorname\": \""+getHumanName(friend.getValue().getId_human())+"\", " +
-                            "   \"othername\": \""+getHumanName(friend.getValue().getId_human())+"\" " +
-                            "}");            out.print(String.join(",", res));
+                res.add("{\"type\": \"friend\", " +
+                            "\"id\": \""+friend.getValue().getId()+"\", " +
+                            "\"date\": \""+friend.getValue().getDate()+"\", " +
+                            "\"id_human\": \""+friend.getValue().getId_human()+"\", " +
+                            "\"id_friend\": \""+friend.getValue().getId_second_human()+"\", " +
+                            "\"authorname\": \""+getHumanName(friend.getValue().getId_human())+"\", " +
+                            "\"othername\": \""+getHumanName(friend.getValue().getId_second_human())+"\"}");
             }
+            
+            out.print("{\"status\": \"success\", \"activities\": [");
+            out.print(String.join(",", res));
             out.print("]}");
         } catch (DAOException e){
             out.println("{\"status\": \"error\"}");   

@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * @author pierant
  */
 public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
-    private DAOFactory daoFactory;
+    private final DAOFactory daoFactory;
     
     public PhotoPostDaoImpl(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
@@ -40,7 +40,7 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
         return post;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO photopost (date, id_human, content, photopath) VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO photopost (id, photopath) VALUES (?, ?)";
     @Override
     public PhotoPost create(PhotoPost post) throws DAOException {
         Connection connexion = null;
@@ -48,9 +48,11 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
         ResultSet valeursAutoGenerees = null;
 
         try {
+            int id_activity = super.createActivity(daoFactory, post.getDate(), post.getId_human());
+            super.createPost(daoFactory, id_activity, post.getContent());
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent(), post.getPhotoPath());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, post.getId(), post.getPhotoPath());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );
@@ -69,13 +71,13 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
         return post;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, photopath FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN photopost pp ON pp.id = p.id";
     @Override
     public ArrayList<PhotoPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
-        PhotoPost post = null;
+        PhotoPost post;
         ArrayList<PhotoPost> posts = new ArrayList<>();
 
         try {
@@ -95,7 +97,7 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, photopath FROM photopost WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, photopath FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN photopost pp ON pp.id = p.id WHERE a.id = ?";
     @Override
     public PhotoPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -119,7 +121,7 @@ public class PhotoPostDaoImpl extends BasicDaoImpl implements PhotoPostDao {
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, photopath FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN photopost pp ON pp.id = p.id WHERE id_human = ?";
     @Override
     public ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;

@@ -22,4 +22,11 @@ public enum Reaction {
   public String toString(){
     return name;
   }
+  
+  public static Reaction fromString(String name) {
+      for(Reaction r : Reaction.values()) {
+          if(r.toString().equalsIgnoreCase(name)) return r;
+      }
+      throw new IllegalArgumentException("Cette valeur n'est pas une réaction valide.");
+  }
 }

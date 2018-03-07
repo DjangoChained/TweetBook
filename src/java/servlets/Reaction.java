@@ -52,7 +52,7 @@ public class Reaction extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
-                beans.Reaction reaction = beans.Reaction.valueOf(data.getProperty("reaction"));
+                beans.Reaction reaction = beans.Reaction.fromString(data.getProperty("reaction"));
                 int id_human = human.getId();
                 int id_post = Integer.parseInt(data.getProperty("id_post"));
                 
@@ -82,7 +82,7 @@ public class Reaction extends HttpServlet {
                     out.println("{\"status\": \"error\",\n\"message\": \"réaction invalide\"}");
                 }
             } catch (DAOException e){
-                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post\"}");
+                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post"+e.getMessage()+"\"}");
             }
     }
 

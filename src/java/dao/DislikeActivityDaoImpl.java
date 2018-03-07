@@ -43,7 +43,7 @@ public class DislikeActivityDaoImpl extends BasicDaoImpl implements DislikeActiv
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?::reaction, ?)";
     @Override
     public DislikeActivity create(DislikeActivity activity) throws DAOException {
         Connection connexion = null;
