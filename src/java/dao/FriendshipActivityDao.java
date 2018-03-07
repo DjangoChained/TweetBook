@@ -7,6 +7,7 @@ package dao;
 
 import beans.FriendshipActivity;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -19,6 +20,7 @@ public interface FriendshipActivityDao {
     FriendshipActivity get(int id) throws DAOException;
     ArrayList<Integer> getFriends(int id_human) throws DAOException;
     ArrayList<FriendshipActivity> getByHuman(int id_human) throws DAOException;
+    Map<Integer, FriendshipActivity> getHashByHuman(int id_human) throws DAOException;
     int getByFriends(int id_human, int id_friend) throws DAOException;
     
     void delete(int id) throws DAOException;

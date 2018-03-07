@@ -1,24 +1,18 @@
 package dao;
 
-import beans.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+import javax.servlet.ServletContext;
 
 public class DAOFactory {
 
-    private static final String PROPERTIES_FILEPATH       = "/dao/dao.properties";
-    private static final String PROPERTY_URL             = "url";
-    private static final String PROPERTY_DRIVER          = "driver";
-    private static final String PROPERTY_USERNAME = "username";
-    private static final String PROPERTY_MOT_DE_PASSE    = "password";
+    private static final String PROPERTY_URL      = "jdbc-url";
+    private static final String PROPERTY_DRIVER   = "jdbc-driver";
+    private static final String PROPERTY_USERNAME = "jdbc-username";
+    private static final String PROPERTY_PASSWORD = "jdbc-password";
 
-    private String              url;
-    private String              username;
-    private String              password;
+    private final String url, username, password;
 
     DAOFactory( String url, String username, String password ) {
         this.url = url;
@@ -30,29 +24,12 @@ public class DAOFactory {
      * Méthode chargée de récupérer les informations de connexion à la base de
      * données, charger le driver JDBC et retourner une instance de la Factory
      */
-    public static DAOFactory getInstance() throws DAOConfigurationException {
-        Properties properties = new Properties();
-        String url;
-        String driver;
-        String username;
-        String password;
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream fichierProperties = classLoader.getResourceAsStream( PROPERTIES_FILEPATH );
-
-        if ( fichierProperties == null ) {
-            throw new DAOConfigurationException( "Le fichier properties " + PROPERTIES_FILEPATH + " est introuvable." );
-        }
-
-        try {
-            properties.load( fichierProperties );
-            url = properties.getProperty( PROPERTY_URL );
-            driver = properties.getProperty( PROPERTY_DRIVER );
-            username = properties.getProperty( PROPERTY_USERNAME );
-            password = properties.getProperty( PROPERTY_MOT_DE_PASSE );
-        } catch ( IOException e ) {
-            throw new DAOConfigurationException( "Impossible de charger le fichier properties " + PROPERTIES_FILEPATH, e );
-        }
+    public static DAOFactory getInstance(ServletContext context) throws DAOConfigurationException {
+        String url, driver, username, password;
+        url = context.getInitParameter( PROPERTY_URL );
+        driver = context.getInitParameter( PROPERTY_DRIVER );
+        username = context.getInitParameter( PROPERTY_USERNAME );
+        password = context.getInitParameter(PROPERTY_PASSWORD );
 
         try {
             Class.forName( driver );

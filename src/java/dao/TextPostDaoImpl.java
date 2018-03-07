@@ -12,6 +12,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 /**
  *
  * @author pierant
@@ -89,7 +91,7 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE a.id = ?";
     @Override
     public TextPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -130,6 +132,32 @@ public class TextPostDaoImpl extends BasicDaoImpl implements TextPostDao {
             while(resultSet.next()) {
                 post = map( resultSet );
                 posts.add(post);
+            }
+            
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+
+        return posts;
+    }
+    
+    @Override
+    public Map<Integer, TextPost> getHashByHuman(int id_human) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        TextPost post = null;
+        Map<Integer, TextPost> posts = new HashMap<>();
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                post = map( resultSet );
+                posts.put(post.getId(), post);
             }
             
         } catch ( SQLException e ) {

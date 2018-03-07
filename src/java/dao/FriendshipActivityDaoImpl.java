@@ -18,6 +18,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -40,7 +42,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
         return activity;
     }
     
-    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id_human, id_second_human) VALUES (?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO friendshipactivity (id, id_second_human) VALUES (?, ?)";
     @Override
     public FriendshipActivity create(FriendshipActivity activity) throws DAOException {
         Connection connexion = null;
@@ -179,6 +181,32 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
         return activities;
     }
     
+    @Override
+    public Map<Integer, FriendshipActivity> getHashByHuman(int id_human) throws DAOException {
+        Connection connexion = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        FriendshipActivity activity = null;
+        Map<Integer, FriendshipActivity> activities = new HashMap<>();
+
+        try {
+            connexion = daoFactory.getConnection();
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human );
+            resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()) {
+                activity = map( resultSet );
+                activities.put(activity.getId(), activity);
+            }
+            
+        } catch ( SQLException e ) {
+            throw new DAOException( e );
+        } finally {
+            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+        }
+
+        return activities;
+    }
+    
     private static final String SQL_SELECT_BY_FRIENDS = "SELECT a.id as id FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id WHERE (id_human = ? OR id_second_human = ?) AND (id_human = ? OR id_second_human = ?)";
     @Override
     public int getByFriends(int id_human, int id_friend) throws DAOException {
@@ -189,7 +217,7 @@ public class FriendshipActivityDaoImpl extends BasicDaoImpl implements Friendshi
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human, id_friend, id_friend );
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_FRIENDS, false, id_human, id_human, id_friend, id_friend );
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 id_friendship_activity = resultSet.getInt("id");
