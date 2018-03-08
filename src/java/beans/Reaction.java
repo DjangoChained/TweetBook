@@ -10,8 +10,8 @@ package beans;
  * @author pierant
  */
 public enum Reaction {
-    LIKE ("like"),
-    DISLIKE("dislike");
+    like ("like"),
+    dislike ("dislike");
     
     private String name = "";
 
@@ -19,6 +19,7 @@ public enum Reaction {
     this.name = name;
   }
 
+  @Override
   public String toString(){
     return name;
   }

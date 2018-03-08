@@ -12,7 +12,7 @@ import beans.TextPost;
 import dao.DAOFactory;
 import dao.FriendshipActivityDao;
 import dao.HumanDao;
-import dao.HumanDaoImpl;
+import dao.HumanDao;
 import dao.TextPostDao;
 import java.io.IOException;
 import java.io.PrintWriter;

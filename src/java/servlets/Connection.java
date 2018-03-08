@@ -13,12 +13,14 @@ import com.google.gson.Gson;
 import config.BCrypt;
 import dao.DAOFactory;
 import dao.HumanDao;
-import forms.ConnectionForm;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
+import tools.ConnectionTools;
 
 @WebServlet(name = "Connection", urlPatterns = {"/user/login"})
 public class Connection extends HttpServlet {
@@ -26,6 +28,7 @@ public class Connection extends HttpServlet {
     public static final String CONF_DAO_FACTORY = "daofactory";
     
     private HumanDao humanDao;
+    private final Map<String, String> errors = new HashMap<>();
     
     @Override
     public void init() throws ServletException {
@@ -35,18 +38,30 @@ public class Connection extends HttpServlet {
     @Override
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         
-        //Human hu = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
         response.setContentType("application/json");
         
         BufferedReader reader = request.getReader();
         Gson gson = new Gson();
-
         Properties data = gson.fromJson(reader, Properties.class);
-        ConnectionForm form = new ConnectionForm();
-
-        form.connectHuman(data, request);
 
         HttpSession session = request.getSession();
+        
+        String email = data.getProperty("email").trim();
+        String password = data.getProperty("password");
+        Human human = new Human();
+        
+        try {
+            ConnectionTools.emailValidation(email, false, null );
+            human.setEmail(email);
+        } catch ( Exception e ) {
+            errors.put("email", e.getMessage());
+        }
+
+        try {
+            tools.ConnectionTools.passwordValidation( password );
+        } catch ( Exception e ) {
+            errors.put("password", e.getMessage());
+        }
 
         /**
          * Si aucune erreur de validation n'a eu lieu, alors ajout du bean
@@ -54,28 +69,21 @@ public class Connection extends HttpServlet {
          */
         session.setAttribute( ATT_SESSION_USER, null );
         PrintWriter out = response.getWriter();
-        if ( form.getErrors().isEmpty() ) {
-            String email = data.getProperty("email");
-            String pwd = data.getProperty("password");
-            if ( email != null && email.trim().length() != 0 && pwd != null && pwd.trim().length() != 0) {
-                Human testHuman = humanDao.get(email);
-                if(testHuman != null){
-                    if(BCrypt.checkpw(pwd, testHuman.getPassword())){
-                        session.setAttribute( ATT_SESSION_USER, testHuman );
-                        out.println("{\"status\": \"success\", \"sessionid\": \"" + session.getId() + "\"}");
-                    } else {
-                        out.print("{\"status\": \"error\",\n"
-                      + "\"message\": \"Email ou mot de passe incorrect.\"\n}");
-                    }
+        if ( errors.isEmpty() ) {
+            Human testHuman = humanDao.get(email);
+            if(testHuman != null){
+                if(BCrypt.checkpw(password, testHuman.getPassword())){
+                    session.setAttribute( ATT_SESSION_USER, testHuman );
+                    out.println("{\"status\": \"success\"}");
                 } else {
-                    out.print("{\"status\": \"error\",\n"
-                      + "\"message\": \"Cet email n'appartient à aucun utilisateur.\"\n}");
+                    out.print("{\"status\": \"error\",\"message\": \"Email ou mot de passe incorrect.\"\n}");
                 }
+            } else {
+                out.print("{\"status\": \"error\",\"message\": \"Email ou mot de passe incorrect.\"\n}");
             }
         } else {
-            out.print("{\"status\": \"error\",\n"
-                      + "\"message\": \"");
-            String message = form.getErrors().entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
+            out.print("{\"status\": \"error\",\"message\": \"");
+            String message = errors.entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
             out.println(message+"\"}");
         }         
     }

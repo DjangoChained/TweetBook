@@ -5,8 +5,8 @@
  */
 package dao;
 
-import static dao.DAOImpl.fermeturesSilencieuses;
-import static dao.DAOImpl.initialisationRequetePreparee;
+import static dao.DAO.fermeturesSilencieuses;
+import static dao.DAO.initialisationRequetePreparee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +18,10 @@ import java.time.LocalDateTime;
  *
  * @author pierant
  */
-public abstract class BasicDaoImpl {
+public abstract class BasicDao {
+    
+    public BasicDao(){}
+    
     public void delete(DAOFactory daoFactory, int id, String request) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;

@@ -16,9 +16,9 @@ public class DAOFactory {
     private static final String PROPERTY_USERNAME = "username";
     private static final String PROPERTY_MOT_DE_PASSE    = "password";
 
-    private String              url;
-    private String              username;
-    private String              password;
+    private String url;
+    private String username;
+    private String password;
 
     DAOFactory( String url, String username, String password ) {
         this.url = url;
@@ -74,30 +74,26 @@ public class DAOFactory {
      * pour le moment)
      */
     public HumanDao getHumanDao() {
-        return new HumanDaoImpl(this);
+        return new HumanDao(this);
     }
     
     public TextPostDao getTextPostDao() {
-        return new TextPostDaoImpl(this);
+        return new TextPostDao(this);
     }
     
     public LinkPostDao getLinkPostDao() {
-        return new LinkPostDaoImpl(this);
+        return new LinkPostDao(this);
     }
     
     public PhotoPostDao getPhotoPostDao() {
-        return new PhotoPostDaoImpl(this);
+        return new PhotoPostDao(this);
     }
     
     public FriendshipActivityDao getFriendshipActivityDao() {
-        return new FriendshipActivityDaoImpl(this);
+        return new FriendshipActivityDao(this);
     }
     
-    public LikeActivityDao getLikeActivityDao() {
-        return new LikeActivityDaoImpl(this);
-    }
-    
-    public DislikeActivityDao getDislikeActivityDao() {
-        return new DislikeActivityDaoImpl(this);
+    public ReactionActivityDao getLikeActivityDao() {
+        return new ReactionActivityDao(this);
     }
 }
