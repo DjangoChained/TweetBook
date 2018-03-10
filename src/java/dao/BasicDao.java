@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
  */
 public abstract class BasicDao {
     
-    public BasicDao(){}
-    
     public void delete(DAOFactory daoFactory, int id, String request) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;

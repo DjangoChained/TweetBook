@@ -7,6 +7,7 @@ package dao;
 
 import beans.Activity;
 import beans.FriendshipActivity;
+import dao.BasicDao;
 import static dao.DAO.fermeturesSilencieuses;
 import static dao.DAO.initialisationRequetePreparee;
 import java.sql.Connection;
@@ -29,6 +30,7 @@ public class FriendshipActivityDao extends BasicDao {
     private DAOFactory daoFactory;
     
     public FriendshipActivityDao(DAOFactory daoFactory){
+        super();
         this.daoFactory = daoFactory;
     }
     
@@ -73,7 +75,7 @@ public class FriendshipActivityDao extends BasicDao {
     }
 
     //private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, id_second_human FROM friendshipactivity";
-    private static final String SQL_SELECT_ALL = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f LEFT JOIN activity a ON f.id = a.id";
     
     public ArrayList<FriendshipActivity> getAll() throws DAOException {
         Connection connexion = null;
@@ -100,7 +102,7 @@ public class FriendshipActivityDao extends BasicDao {
     }
 
     //private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, id_second_human FROM friendshipactivity WHERE id = ?";
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id WHERE a.id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f LEFT JOIN activity a ON f.id = a.id WHERE a.id = ?";
     
     public FriendshipActivity get(int id) throws DAOException {
         Connection connexion = null;
@@ -124,7 +126,7 @@ public class FriendshipActivityDao extends BasicDao {
         return activity;
     }
     
-    private static final String SQL_SELECT_FRIENDS = "SELECT a.id as id, id_second_human, id_human FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id WHERE id_human = ? OR id_second_human = ?";
+    private static final String SQL_SELECT_FRIENDS = "SELECT a.id as id, id_second_human, id_human FROM friendshipactivity f LEFT JOIN activity a ON f.id = a.id WHERE id_human = ? OR id_second_human = ?";
     
     public ArrayList<Integer> getFriends(int id_human) throws DAOException { 
         Connection connexion = null;
@@ -154,7 +156,7 @@ public class FriendshipActivityDao extends BasicDao {
 }
     
     //private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, id_second_human FROM friendshipactivity WHERE id_human = ? OR id_second_human = ?";
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id WHERE id_human = ? OR id_second_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, id_second_human, date, id_human FROM friendshipactivity f LEFT JOIN activity a ON f.id = a.id WHERE id_human = ? OR id_second_human = ?";
     
     public ArrayList<FriendshipActivity> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -207,7 +209,7 @@ public class FriendshipActivityDao extends BasicDao {
         return activities;
     }
     
-    private static final String SQL_SELECT_BY_FRIENDS = "SELECT a.id as id FROM friendshipactivity f INNER JOIN activity a ON f.id = a.id WHERE (id_human = ? OR id_second_human = ?) AND (id_human = ? OR id_second_human = ?)";
+    private static final String SQL_SELECT_BY_FRIENDS = "SELECT a.id as id FROM friendshipactivity f LEFT JOIN activity a ON f.id = a.id WHERE (id_human = ? OR id_second_human = ?) AND (id_human = ? OR id_second_human = ?)";
     
     public int getByFriends(int id_human, int id_friend) throws DAOException {
         Connection connexion = null;

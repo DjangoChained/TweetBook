@@ -69,7 +69,7 @@ public class PhotoPostDao extends BasicDao{
         return post;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost";
+    private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id";
     
     public ArrayList<PhotoPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -95,7 +95,7 @@ public class PhotoPostDao extends BasicDao{
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, photopath FROM photopost WHERE id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id = ?";
     
     public PhotoPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -119,7 +119,7 @@ public class PhotoPostDao extends BasicDao{
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id_human = ?";
     
     public ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -146,7 +146,7 @@ public class PhotoPostDao extends BasicDao{
         return posts;
     }
 
-    private static final String SQL_UPDATE = "UPDATE photopost SET date = ?, id_human = ?, content = ?, photopath = ? WHERE id = ?";
+    private static final String SQL_UPDATE = "UPDATE photopost SET photopath = ? WHERE id = ?";
     
     public void update(PhotoPost post) throws DAOException {
         Connection connexion = null;
@@ -154,8 +154,10 @@ public class PhotoPostDao extends BasicDao{
         ResultSet resultSet = null;
 
         try {
+            super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
+            super.updatePost(daoFactory, post.getId(), post.getContent());
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getDate(), post.getId_human(), post.getContent(), post.getPhotoPath(), post.getId());
+            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getPhotoPath(), post.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
@@ -167,6 +169,8 @@ public class PhotoPostDao extends BasicDao{
     private static final String SQL_DELETE= "DELETE FROM photopost WHERE id = ?";
     
     public void delete(int id) throws DAOException {
+        super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
+        super.delete(daoFactory, id, "DELETE FROM post WHERE id = ");
         super.delete(daoFactory, id, SQL_DELETE);
     }
 }

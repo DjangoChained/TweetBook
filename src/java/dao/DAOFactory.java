@@ -93,7 +93,7 @@ public class DAOFactory {
         return new FriendshipActivityDao(this);
     }
     
-    public ReactionActivityDao getLikeActivityDao() {
+    public ReactionActivityDao getReactionActivityDao() {
         return new ReactionActivityDao(this);
     }
 }

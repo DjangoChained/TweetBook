@@ -1,13 +1,11 @@
 package servlets;
 
-import beans.DislikeActivity;
+import beans.ReactionActivity;
 import beans.Human;
-import beans.LikeActivity;
 import com.google.gson.Gson;
 import dao.DAOException;
 import dao.DAOFactory;
-import dao.DislikeActivityDao;
-import dao.LikeActivityDao;
+import dao.ReactionActivityDao;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,27 +26,21 @@ public class Reaction extends HttpServlet {
     
     public static final String ATT_SESSION_USER = "sessionHuman";
     public static final String CONF_DAO_FACTORY = "daofactory";
-    private LikeActivityDao likeDao;
-    private DislikeActivityDao dislikeDao;
+    private ReactionActivityDao reactionDao;
     
     @Override
     public void init() throws ServletException {
-        this.likeDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLikeActivityDao();
-        this.dislikeDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getDislikeActivityDao();
+        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getReactionActivityDao();
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        
+        response.setContentType("application/json");        
         BufferedReader reader = request.getReader();
         Gson gson = new Gson();
-
         Properties data = gson.fromJson(reader, Properties.class);
-        
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
-        
         PrintWriter out = response.getWriter();
         
         try {
@@ -56,34 +48,20 @@ public class Reaction extends HttpServlet {
                 int id_human = human.getId();
                 int id_post = Integer.parseInt(data.getProperty("id_post"));
                 
-                if (reaction == beans.Reaction.LIKE) {
-                    DislikeActivity dislike = dislikeDao.get(id_human, id_post);
-                    if (dislike != null){
-                        dislikeDao.delete(dislike.getId());
-                    }
-                    LikeActivity like = new LikeActivity();
-                    like.setDate(LocalDateTime.now());
-                    like.setId_human(id_human);
-                    like.setId_post(id_post);
-                    likeDao.create(like);
-                    out.println("{\"status\": \"success\",\n\"id\": \""+like.getId()+"\"}");
-                } else if (reaction == beans.Reaction.DISLIKE){
-                    LikeActivity like = likeDao.get(id_human, id_post);
-                    if (like != null){
-                        likeDao.delete(like.getId());
-                    }
-                    DislikeActivity dislike = new DislikeActivity();
-                    dislike.setDate(LocalDateTime.now());
-                    dislike.setId_human(id_human);
-                    dislike.setId_post(id_post);
-                    dislikeDao.create(dislike);
-                    out.println("{\"status\": \"success\",\n\"id\": \""+dislike.getId()+"\"}");
-                } else {
-                    out.println("{\"status\": \"error\",\n\"message\": \"réaction invalide\"}");
-                }
-            } catch (DAOException e){
-                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post\"}");
-            }
+                ReactionActivity reac = reactionDao.get(id_human, id_post);
+                
+                if(reac != null && reac.getReaction() != reaction)
+                    reactionDao.delete(reac.getId());
+                reac.setDate(LocalDateTime.now());
+                reac.setId_human(id_human);
+                reac.setId_post(id_post);
+                reac.setReaction(reaction);
+                reactionDao.create(reac);
+                
+                out.println("{\"status\": \"success\",\n\"id\": \""+reac.getId()+"\"}");
+        } catch (DAOException e){
+            out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post\"}");
+        }
     }
 
     @Override
@@ -99,21 +77,15 @@ public class Reaction extends HttpServlet {
                 int id_human = human.getId();
                 int id_post = Integer.parseInt(data.getProperty("id_post"));
                 
-                LikeActivity like = likeDao.get(id_human, id_post);
-                if (like != null) {
-                    likeDao.delete(like.getId());
-                    out.println("{\"status\": \"success\"}");
-                    return;
-                }
-                DislikeActivity dislike = dislikeDao.get(id_human, id_post);
-                if (dislike != null) {
-                    dislikeDao.delete(dislike.getId());
+                ReactionActivity reaction = reactionDao.get(id_human, id_post);
+                if (reaction != null) {
+                    reactionDao.delete(reaction.getId());
                     out.println("{\"status\": \"success\"}");
                     return;
                 }
                 out.println("{\"status\": \"error\",\n\"message\": \"Aucune réaction trouvée.\"}");
-            } catch (DAOException e) {
-                out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de l'annulation de la réaction\"}");
-            }
+        } catch (DAOException e) {
+            out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de l'annulation de la réaction\"}");
+        }
     }
 }

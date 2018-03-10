@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author pierant
  */
-public class TextPostDao extends BasicDao implements TextPostDao {
+public class TextPostDao extends BasicDao {
     private DAOFactory daoFactory;
     
     public TextPostDao(DAOFactory daoFactory){
@@ -65,7 +65,7 @@ public class TextPostDao extends BasicDao implements TextPostDao {
         }
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id";
     
     public ArrayList<TextPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -91,7 +91,7 @@ public class TextPostDao extends BasicDao implements TextPostDao {
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE a.id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id WHERE a.id = ?";
     
     public TextPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -115,7 +115,7 @@ public class TextPostDao extends BasicDao implements TextPostDao {
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN textpost t ON t.id = p.id WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id WHERE id_human = ?";
     
     public ArrayList<TextPost> getByHuman(int id_human) throws DAOException {
         System.out.println("entré dans textpost avec id_human = "+id_human);
@@ -168,7 +168,6 @@ public class TextPostDao extends BasicDao implements TextPostDao {
 
         return posts;
     }
-
     
     public void update(TextPost post) throws DAOException {
         super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());

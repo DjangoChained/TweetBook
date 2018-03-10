@@ -74,7 +74,7 @@ public class LinkPostDao extends BasicDao{
         return post;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id";
     
     public ArrayList<LinkPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -100,7 +100,7 @@ public class LinkPostDao extends BasicDao{
         return posts;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE a.id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE a.id = ?";
     
     public LinkPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -124,7 +124,7 @@ public class LinkPostDao extends BasicDao{
         return post;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, url, title FROM activity a INNER JOIN post p ON a.id = p.id INNER JOIN linkpost l ON l.id = p.id WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE id_human = ?";
     
     public ArrayList<LinkPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
