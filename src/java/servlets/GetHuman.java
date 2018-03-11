@@ -18,15 +18,22 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "getHuman", urlPatterns = {"/user"})
 public class GetHuman extends HttpServlet {
 
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     
     private HumanDao humanDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();

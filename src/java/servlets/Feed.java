@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Feed", urlPatterns = {"/feed"})
 public class Feed extends HttpServlet {
@@ -158,7 +158,7 @@ public class Feed extends HttpServlet {
             }
             out.print("]}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\":\"+"+e.getMessage()+"\"}");    
+            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du feed.\"}");    
         }
     }
 }

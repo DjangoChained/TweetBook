@@ -27,21 +27,44 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
-import tools.ConnectionTools;
+import config.ConnectionTools;
 
+/**
+ *
+ *
+ */
 @WebServlet(name = "SignUp", urlPatterns = {"/user/register"})
 public class SignUp extends HttpServlet {
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
+
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
     
     private HumanDao humanDao;
     private final Map<String, String> errors = new HashMap<>();
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
         response.setContentType("application/json");

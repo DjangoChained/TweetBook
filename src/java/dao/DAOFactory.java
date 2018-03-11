@@ -8,6 +8,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ *
+ *
+ */
 public class DAOFactory {
 
     private static final String PROPERTIES_FILEPATH       = "/dao/dao.properties";
@@ -30,6 +34,13 @@ public class DAOFactory {
      * Méthode chargée de récupérer les informations de connexion à la base de
      * données, charger le driver JDBC et retourner une instance de la Factory
      */
+
+    /**
+     *
+     * @return
+     * @throws DAOConfigurationException
+     */
+
     public static DAOFactory getInstance() throws DAOConfigurationException {
         Properties properties = new Properties();
         String url;
@@ -73,26 +84,52 @@ public class DAOFactory {
      * Méthodes de récupération de l'implémentation des différents DAO (un seul
      * pour le moment)
      */
+
+    /**
+     *
+     * @return
+     */
+
     public HumanDao getHumanDao() {
         return new HumanDao(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public TextPostDao getTextPostDao() {
         return new TextPostDao(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public LinkPostDao getLinkPostDao() {
         return new LinkPostDao(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public PhotoPostDao getPhotoPostDao() {
         return new PhotoPostDao(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public FriendshipActivityDao getFriendshipActivityDao() {
         return new FriendshipActivityDao(this);
     }
     
+    /**
+     *
+     * @return
+     */
     public ReactionActivityDao getReactionActivityDao() {
         return new ReactionActivityDao(this);
     }

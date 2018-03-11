@@ -18,11 +18,15 @@ import java.util.ArrayList;
 
 /**
  *
- * @author pierant
+ *
  */
 public class HumanDao extends BasicDao {
     private final DAOFactory daoFactory;
     
+    /**
+     *
+     * @param daoFactory
+     */
     public HumanDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
@@ -43,6 +47,11 @@ public class HumanDao extends BasicDao {
     
     private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password, activityvisibility) VALUES (?, ?, ?, ?, ?, ?, ?::activityvisibility)";
     
+    /**
+     *
+     * @param human
+     * @throws DAOException
+     */
     public void create(Human human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -51,7 +60,7 @@ public class HumanDao extends BasicDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), Timestamp.valueOf(human.getBirthDate()),
+            preparedStatement = initialisePreparedStatement( connexion, SQL_INSERT, true, human.getLastName(), human.getFirstName(), Timestamp.valueOf(human.getBirthDate()),
                                                                human.getEmail(), human.getUsername(), human.getPassword(), human.getVisibility().toString());
             int status = preparedStatement.executeUpdate();
             /* Analyse du statut retourné par la requête d'insertion */
@@ -74,6 +83,11 @@ public class HumanDao extends BasicDao {
     
     private static final String SQL_SELECT_ALL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human";
     
+    /**
+     *
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<Human> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -100,6 +114,12 @@ public class HumanDao extends BasicDao {
     
     private static final String SQL_SELECT_BY_ID = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE id = ?";
     
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     public Human get(int id) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -109,7 +129,7 @@ public class HumanDao extends BasicDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID, false, id );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID, false, id );
             resultSet = preparedStatement.executeQuery();
             /* Parcours de la ligne de données de l'éventuel ResulSet retourné */
             if ( resultSet.next() ) {
@@ -126,6 +146,12 @@ public class HumanDao extends BasicDao {
     
     private static final String SQL_SELECT_BY_EMAIL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE email = ?";
     
+    /**
+     *
+     * @param email
+     * @return
+     * @throws DAOException
+     */
     public Human get(String email) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -135,7 +161,7 @@ public class HumanDao extends BasicDao {
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_EMAIL, false, email );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_EMAIL, false, email );
             resultSet = preparedStatement.executeQuery();
             /* Parcours de la ligne de données de l'éventuel ResulSet retourné */
             if ( resultSet.next() ) {
@@ -150,7 +176,12 @@ public class HumanDao extends BasicDao {
         return human;
     }
     
-    
+    /**
+     *
+     * @param friends_ids
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<Human> getFriends(ArrayList<Integer> friends_ids) throws DAOException {
         ArrayList<Human> humans = new ArrayList<>();
 
@@ -165,6 +196,11 @@ public class HumanDao extends BasicDao {
     
     private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, activityvisibility = ?::activityvisibility WHERE id = ?";
     
+    /**
+     *
+     * @param human
+     * @throws DAOException
+     */
     public void update(Human human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -177,7 +213,7 @@ public class HumanDao extends BasicDao {
                 visibility = "authoronly";
             else if (human.getVisibility() == ActivityVisibility.friends)
                 visibility = "friends";
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
+            preparedStatement = initialisePreparedStatement( connexion, SQL_UPDATE, false, human.getLastName(), human.getFirstName(), human.getBirthDate(),
                                                                human.getEmail(), human.getUsername(), human.getVisibility().toString(), human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
@@ -189,13 +225,23 @@ public class HumanDao extends BasicDao {
 
     private static final String SQL_DELETE= "DELETE FROM human WHERE id = ?";
     
+    /**
+     *
+     * @param id
+     * @throws DAOException
+     */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, SQL_DELETE);
     }
     
     private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
     
-    
+    /**
+     *
+     * @param human
+     * @param password
+     * @throws DAOException
+     */
     public void updatePassword(Human human, String password) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -203,7 +249,7 @@ public class HumanDao extends BasicDao {
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE_PASSWORD, false, password, human.getId());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_UPDATE_PASSWORD, false, password, human.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );

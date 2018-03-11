@@ -8,7 +8,6 @@ package dao;
 import beans.PhotoPost;
 import beans.Post;
 import static dao.DAO.fermeturesSilencieuses;
-import static dao.DAO.initialisationRequetePreparee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,14 +16,19 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import static dao.DAO.initialisePreparedStatement;
 
 /**
  *
- * @author pierant
+ *
  */
 public class PhotoPostDao extends BasicDao{
     private DAOFactory daoFactory;
     
+    /**
+     *
+     * @param daoFactory
+     */
     public PhotoPostDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
@@ -42,6 +46,12 @@ public class PhotoPostDao extends BasicDao{
     
     private static final String SQL_INSERT = "INSERT INTO photopost (date, id_human, content, photopath) VALUES (?, ?, ?, ?)";
     
+    /**
+     *
+     * @param post
+     * @return
+     * @throws DAOException
+     */
     public PhotoPost create(PhotoPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -50,7 +60,7 @@ public class PhotoPostDao extends BasicDao{
         try {
             /* Récupération d'une connexion depuis la Factory */
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent(), post.getPhotoPath());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_INSERT, true, Timestamp.valueOf(post.getDate()), post.getId_human(), post.getContent(), post.getPhotoPath());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );
@@ -71,6 +81,11 @@ public class PhotoPostDao extends BasicDao{
 
     private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id";
     
+    /**
+     *
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<PhotoPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -97,6 +112,12 @@ public class PhotoPostDao extends BasicDao{
 
     private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id = ?";
     
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     public PhotoPost get(int id) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -105,7 +126,7 @@ public class PhotoPostDao extends BasicDao{
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID, false, id );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID, false, id );
             resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() ) {
                 post = map( resultSet );
@@ -121,6 +142,12 @@ public class PhotoPostDao extends BasicDao{
     
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id_human = ?";
     
+    /**
+     *
+     * @param id_human
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -130,7 +157,7 @@ public class PhotoPostDao extends BasicDao{
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 post = map( resultSet );
@@ -148,6 +175,11 @@ public class PhotoPostDao extends BasicDao{
 
     private static final String SQL_UPDATE = "UPDATE photopost SET photopath = ? WHERE id = ?";
     
+    /**
+     *
+     * @param post
+     * @throws DAOException
+     */
     public void update(PhotoPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -157,7 +189,7 @@ public class PhotoPostDao extends BasicDao{
             super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
             super.updatePost(daoFactory, post.getId(), post.getContent());
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getPhotoPath(), post.getId());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_UPDATE, false, post.getPhotoPath(), post.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
@@ -168,6 +200,11 @@ public class PhotoPostDao extends BasicDao{
 
     private static final String SQL_DELETE= "DELETE FROM photopost WHERE id = ?";
     
+    /**
+     *
+     * @param id
+     * @throws DAOException
+     */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
         super.delete(daoFactory, id, "DELETE FROM post WHERE id = ");

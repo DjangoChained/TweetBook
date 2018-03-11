@@ -19,20 +19,38 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Reaction", urlPatterns = {"/reaction"})
 public class Reaction extends HttpServlet {
     
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     private ReactionActivityDao reactionDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getReactionActivityDao();
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -64,6 +82,13 @@ public class Reaction extends HttpServlet {
         }
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

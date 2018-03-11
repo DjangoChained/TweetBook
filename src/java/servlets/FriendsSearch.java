@@ -27,16 +27,27 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "FriendsSearch", urlPatterns = {"/friends/search"})
 public class FriendsSearch extends HttpServlet {
     
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     private HumanDao humanDao;
     private FriendshipActivityDao friendshipDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();

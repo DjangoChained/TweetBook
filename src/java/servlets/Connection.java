@@ -20,21 +20,44 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
-import tools.ConnectionTools;
+import config.ConnectionTools;
 
+/**
+ *
+ *
+ */
 @WebServlet(name = "Connection", urlPatterns = {"/user/login"})
 public class Connection extends HttpServlet {
+
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     
     private HumanDao humanDao;
     private final Map<String, String> errors = new HashMap<>();
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
     
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         
@@ -58,7 +81,7 @@ public class Connection extends HttpServlet {
         }
 
         try {
-            tools.ConnectionTools.passwordValidation( password );
+            config.ConnectionTools.passwordValidation( password );
         } catch ( Exception e ) {
             errors.put("password", e.getMessage());
         }

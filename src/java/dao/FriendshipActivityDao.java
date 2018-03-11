@@ -9,7 +9,6 @@ import beans.Activity;
 import beans.FriendshipActivity;
 import dao.BasicDao;
 import static dao.DAO.fermeturesSilencieuses;
-import static dao.DAO.initialisationRequetePreparee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,10 +20,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import static dao.DAO.initialisePreparedStatement;
 
 /**
  *
- * @author pierant
+ *
  */
 public class FriendshipActivityDao extends BasicDao {
     private DAOFactory daoFactory;
@@ -55,7 +55,7 @@ public class FriendshipActivityDao extends BasicDao {
             int id_activity = super.createActivity(daoFactory, activity.getDate(), activity.getId_human());
             
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity, activity.getId_second_human());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_INSERT, true, id_activity, activity.getId_second_human());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création de l'activité, aucune ligne ajoutée dans la table." );
@@ -112,7 +112,7 @@ public class FriendshipActivityDao extends BasicDao {
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID, false, id );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID, false, id );
             resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() ) {
                 activity = map( resultSet );
@@ -136,7 +136,7 @@ public class FriendshipActivityDao extends BasicDao {
 
     try {
         connexion = daoFactory.getConnection();
-        preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_FRIENDS, false, id_human, id_human );
+        preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_FRIENDS, false, id_human, id_human );
         resultSet = preparedStatement.executeQuery();
         
         while ( resultSet.next() ) {
@@ -167,7 +167,7 @@ public class FriendshipActivityDao extends BasicDao {
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 activity = map( resultSet );
@@ -193,7 +193,7 @@ public class FriendshipActivityDao extends BasicDao {
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 activity = map( resultSet );
@@ -219,7 +219,7 @@ public class FriendshipActivityDao extends BasicDao {
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_FRIENDS, false, id_human, id_human, id_friend, id_friend );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_FRIENDS, false, id_human, id_human, id_friend, id_friend );
             resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 id_friendship_activity = resultSet.getInt("id");

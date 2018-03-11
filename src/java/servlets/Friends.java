@@ -26,16 +26,27 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Friends", urlPatterns = {"/friends"})
 public class Friends extends HttpServlet {
     
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
     private FriendshipActivityDao friendshipDao;
     private HumanDao humanDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
@@ -74,7 +85,13 @@ public class Friends extends HttpServlet {
         out.print("]}");
 }
 
-
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -102,6 +119,13 @@ public class Friends extends HttpServlet {
             }
     }
     
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

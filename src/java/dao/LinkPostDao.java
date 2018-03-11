@@ -8,7 +8,6 @@ package dao;
 import beans.Post;
 import beans.LinkPost;
 import static dao.DAO.fermeturesSilencieuses;
-import static dao.DAO.initialisationRequetePreparee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,14 +18,19 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import static dao.DAO.initialisePreparedStatement;
 
 /**
  *
- * @author pierant
+ *
  */
 public class LinkPostDao extends BasicDao{
     private DAOFactory daoFactory;
     
+    /**
+     *
+     * @param daoFactory
+     */
     public LinkPostDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
@@ -45,6 +49,12 @@ public class LinkPostDao extends BasicDao{
     
     private static final String SQL_INSERT = "INSERT INTO linkpost (id, url, title) VALUES (?, ?, ?)";
     
+    /**
+     *
+     * @param post
+     * @return
+     * @throws DAOException
+     */
     public LinkPost create(LinkPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -55,7 +65,7 @@ public class LinkPostDao extends BasicDao{
             super.createPost(daoFactory, id_activity, post.getContent());
             
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity, post.getUrl(), post.getTitle());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_INSERT, true, id_activity, post.getUrl(), post.getTitle());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création du post, aucune ligne ajoutée dans la table." );
@@ -76,6 +86,11 @@ public class LinkPostDao extends BasicDao{
 
     private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id";
     
+    /**
+     *
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<LinkPost> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -102,6 +117,12 @@ public class LinkPostDao extends BasicDao{
 
     private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE a.id = ?";
     
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DAOException
+     */
     public LinkPost get(int id) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -110,7 +131,7 @@ public class LinkPostDao extends BasicDao{
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID, false, id );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID, false, id );
             resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() ) {
                 post = map( resultSet );
@@ -126,6 +147,12 @@ public class LinkPostDao extends BasicDao{
     
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE id_human = ?";
     
+    /**
+     *
+     * @param id_human
+     * @return
+     * @throws DAOException
+     */
     public ArrayList<LinkPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -135,7 +162,7 @@ public class LinkPostDao extends BasicDao{
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 post = map( resultSet );
@@ -151,7 +178,12 @@ public class LinkPostDao extends BasicDao{
         return posts;
     }
     
-    
+    /**
+     *
+     * @param id_human
+     * @return
+     * @throws DAOException
+     */
     public Map<Integer, LinkPost> getHashByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -161,7 +193,7 @@ public class LinkPostDao extends BasicDao{
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 post = map( resultSet );
@@ -179,6 +211,11 @@ public class LinkPostDao extends BasicDao{
 
     private static final String SQL_UPDATE = "UPDATE linkpost SET url = ?, title = ? WHERE id = ?";
     
+    /**
+     *
+     * @param post
+     * @throws DAOException
+     */
     public void update(LinkPost post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
@@ -188,7 +225,7 @@ public class LinkPostDao extends BasicDao{
             super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
             super.updatePost(daoFactory, post.getId(), post.getContent());
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_UPDATE, false, post.getUrl(), post.getTitle(), post.getId());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_UPDATE, false, post.getUrl(), post.getTitle(), post.getId());
             preparedStatement.executeUpdate();
         } catch ( SQLException e ) {
             throw new DAOException( e );
@@ -199,6 +236,11 @@ public class LinkPostDao extends BasicDao{
 
     private static final String SQL_DELETE= "DELETE FROM linkpost WHERE id = ?";
     
+    /**
+     *
+     * @param id
+     * @throws DAOException
+     */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
         super.delete(daoFactory, id, "DELETE FROM post WHERE id = ");

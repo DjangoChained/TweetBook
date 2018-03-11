@@ -23,20 +23,38 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "UpdatePassword", urlPatterns = {"/user/password"})
 public class UpdatePassword extends HttpServlet {
     
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
+
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
     private HumanDao humanDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
     
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {

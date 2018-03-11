@@ -6,21 +6,28 @@
 package beans;
 
 /**
- *
- * @author pierant
+ * Enumération représentant une réaction à une publication
  */
 public enum Reaction {
+
+    /**
+     * permet à un utilisateur de dire qu'il aime une publication
+     */
     like ("like"),
+
+    /**
+     * permet à un utilisateur de dire qu'il n'aime pas une publication
+     */
     dislike ("dislike");
     
     private String name = "";
 
-  Reaction(String name){
-    this.name = name;
-  }
+    Reaction(String name){
+        this.name = name;
+    }
 
-  @Override
-  public String toString(){
-    return name;
-  }
+    @Override
+        public String toString(){
+        return name;
+    }
 }

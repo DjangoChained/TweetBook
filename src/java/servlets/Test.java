@@ -29,24 +29,47 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Test", urlPatterns = {"/Test"})
 public class Test extends HttpServlet {
+
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
+
+    /**
+     *
+     */
     public static final String ATT_HUMAN         = "human";
+
+    /**
+     *
+     */
     public static final String VUE              = "/WEB-INF/test.jsp";
 
     private HumanDao humanDao;
     private TextPostDao textPostDao;
     private FriendshipActivityDao friendshipDao;
 
+    /**
+     *
+     * @throws ServletException
+     */
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
         this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
         this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
     }
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         log("entré dans test");
         System.out.println("entré dans test");

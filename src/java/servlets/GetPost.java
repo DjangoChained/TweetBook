@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "getPost", urlPatterns = {"/post"})
 public class GetPost extends HttpServlet {
