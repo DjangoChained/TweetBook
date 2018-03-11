@@ -158,7 +158,7 @@ public class Feed extends HttpServlet {
             }
             out.print("]}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\"}");   
+            out.println("{\"status\": \"error\",\"message\":\"+"+e.getMessage()+"\"}");    
         }
     }
 }

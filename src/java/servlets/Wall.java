@@ -132,7 +132,7 @@ public class Wall extends HttpServlet {
             out.print(String.join(",", res));
             out.print("]}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\"}");   
+            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du wall.\"}");   
         }
     }
     

@@ -71,7 +71,7 @@ public class ReactionActivityDao extends BasicDao {
         return activity;
     }
     
-    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id";
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id";
     
     public ArrayList<ReactionActivity> getAll() throws DAOException {
         Connection connexion = null;
@@ -97,7 +97,7 @@ public class ReactionActivityDao extends BasicDao {
         return activities;
     }
     
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE a.id = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE a.id = ?";
     
     public ReactionActivity get(int id) throws DAOException {
         Connection connexion = null;
@@ -121,7 +121,7 @@ public class ReactionActivityDao extends BasicDao {
         return activity;
     }
     
-    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ?";
+    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ?";
     
     public ReactionActivity get(int id_human, int id_post) throws DAOException {
         Connection connexion = null;
@@ -145,7 +145,7 @@ public class ReactionActivityDao extends BasicDao {
         return activity;
     }
     
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ?";
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ?";
     
     public ArrayList<ReactionActivity> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
