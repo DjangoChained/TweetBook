@@ -16,47 +16,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet de rechercher des utilisateurs
  */
 @WebServlet(name = "FriendsSearch", urlPatterns = {"/friends/search"})
 public class FriendsSearch extends HttpServlet {
     
     /**
-     *
+     * Le Dao qui permet de manipuler les utilisateurs
      */
-    public static final String ATT_SESSION_USER = "sessionHuman";
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
     private HumanDao humanDao;
+    /**
+     * Le Dao qui permet de manipuler les liens d'amitié
+     */
     private FriendshipActivityDao friendshipDao;
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
     /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Permet de rechercher des utilisateurs à partir d'une chaîne de caractères
+     * Reçois au format JSON une chaîne de caractères de laquelle seront déduit des utilisateurs
+     * dont le nom ou prénom pourraient correspondre
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         PrintWriter out = response.getWriter();
         try {
             String query = request.getParameter("q").toLowerCase();

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.FriendshipActivity;
@@ -33,29 +28,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet de récupérer le feed d'un utilisateur (ses activités et celles de ses amis)
  */
 @WebServlet(name = "Feed", urlPatterns = {"/feed"})
 public class Feed extends HttpServlet {
 
-    public static final String ATT_SESSION_USER = "sessionHuman";
-    public static final String CONF_DAO_FACTORY = "daofactory";
+    /**
+     * Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
+    /**
+     * Dao permettant de manipuler les réactions
+     */
     private ReactionActivityDao reactionDao;
+    /**
+     * Dao permettant de manipuler les publications contenant du texte
+     */
     private TextPostDao textPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant un lien
+     */
     private LinkPostDao linkPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant une photo
+     */
     private PhotoPostDao photoPostDao;
+    /**
+     * Dao permettant de manipuler les liens d'amitié
+     */
     private FriendshipActivityDao friendshipDao;
 
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException 
+     */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
-        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getReactionActivityDao();
-        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
-        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLinkPostDao();
-        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getPhotoPostDao();
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
+        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getReactionActivityDao();
+        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getTextPostDao();
+        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getLinkPostDao();
+        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getPhotoPostDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
     }
 
     private static final HashMap<Integer, String> names = new HashMap<>();
@@ -67,14 +81,13 @@ public class Feed extends HttpServlet {
         return names.get(id);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Permet de récupérer le feed d'un utilisateur (ses activités et celles de ses amis)
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -84,7 +97,7 @@ public class Feed extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+            Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
             ArrayList<Human> users = humanDao.getFriends(friendshipDao.getFriends(human.getId()));
             users.add(human);
 
@@ -102,10 +115,6 @@ public class Feed extends HttpServlet {
                 friends.putAll(friendshipDao.getHashByHuman(curHuman.getId()));
             }
 
-            out.print("{" +
-                            "    \"status\": \"success\"," +
-                            "    \"activities\": [");
-
             for(Map.Entry<Integer, ReactionActivity> reaction : reactions.entrySet()) {
                 Human author = humanDao.get(reaction.getValue().getId_human());
                 int post_author_id = -1;
@@ -120,7 +129,7 @@ public class Feed extends HttpServlet {
                 Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"reaction\", " +
-                            "   \"reaction:\": \""+reaction.getValue().getReaction().toString()+"\", " +
+                            "   \"reaction\": \""+reaction.getValue().getReaction().toString()+"\", " +
                             "   \"id\": \""+reaction.getValue().getId()+"\", " +
                             "   \"date\": \""+reaction.getValue().getDate()+"\", " +
                             "   \"id_post\": \""+reaction.getValue().getId_post()+"\", " +

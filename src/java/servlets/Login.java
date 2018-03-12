@@ -23,38 +23,35 @@ import javax.servlet.annotation.WebServlet;
 import config.ConnectionTools;
 
 /**
- *
- *
+ * Servlet qui permet de connecter un utilisateur existant
  */
-@WebServlet(name = "Connection", urlPatterns = {"/user/login"})
-public class Connection extends HttpServlet {
-
-    /**
-     *
-     */
-    public static final String ATT_SESSION_USER = "sessionHuman";
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
+@WebServlet(name = "Login", urlPatterns = {"/user/login"})
+public class Login extends HttpServlet {
     
+    /**
+     * le Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
+    /**
+     * contiendra des erreurs si les données fournies dans le formulaire de
+     * connexion sont incorrectes
+     */
     private final Map<String, String> errors = new HashMap<>();
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute("daofactory")).getHumanDao();
     }
     
     /**
-     *
-     * @param request
-     * @param response
+     * Permet à un utilisateur de se connecter.
+     * Reçois au format JSON l'email de l'utilisateur ("email") et son mot de passe ("password")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -90,14 +87,14 @@ public class Connection extends HttpServlet {
          * Si aucune erreur de validation n'a eu lieu, alors ajout du bean
          * Human à la session, sinon suppression du bean de la session.
          */
-        session.setAttribute( ATT_SESSION_USER, null );
+        session.setAttribute("sessionHuman", null );
         PrintWriter out = response.getWriter();
         if ( errors.isEmpty() ) {
             Human testHuman = humanDao.get(email);
             if(testHuman != null){
                 if(BCrypt.checkpw(password, testHuman.getPassword())){
-                    session.setAttribute( ATT_SESSION_USER, testHuman );
-                    out.println("{\"status\": \"success\"}");
+                    session.setAttribute("sessionHuman", testHuman );
+                    out.println("{\"status\": \"success\", \"name\":\""+testHuman.getFirstName()+" "+testHuman.getLastName()+"\"}");
                 } else {
                     out.print("{\"status\": \"error\",\"message\": \"Email ou mot de passe incorrect.\"\n}");
                 }

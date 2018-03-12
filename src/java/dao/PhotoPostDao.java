@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import beans.PhotoPost;
-import beans.Post;
-import static dao.DAO.fermeturesSilencieuses;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,22 +10,28 @@ import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import static dao.DAO.initialisePreparedStatement;
+import static dao.DAO.quietClose;
 
 /**
- *
- *
+ * Implémentation du Dao gérant les publications contenant une photo
  */
 public class PhotoPostDao extends BasicDao{
-    private DAOFactory daoFactory;
+    private final DAOFactory daoFactory;
     
     /**
-     *
+     * permet de récupérer une connexion à la base de données
      * @param daoFactory
      */
     public PhotoPostDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
     
+    /**
+     * instancier une publication contenant une photo
+     * @param resultSet resultSet permmettant de récupérer les données de la publication
+     * @return la publication créée ou null
+     * @throws SQLException 
+     */
     private static PhotoPost map( ResultSet resultSet ) throws SQLException {
         PhotoPost post = new PhotoPost();
         post.setId(resultSet.getInt( "id"));
@@ -44,13 +43,16 @@ public class PhotoPostDao extends BasicDao{
         return post;
     }
     
+    /**
+     * la requête SQL permettant de créer la publication
+     */
     private static final String SQL_INSERT = "INSERT INTO photopost (date, id_human, content, photopath) VALUES (?, ?, ?, ?)";
     
     /**
-     *
-     * @param post
-     * @return
-     * @throws DAOException
+     * créer la publication
+     * @param post la publication à créer
+     * @return la publication créée ou null
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public PhotoPost create(PhotoPost post) throws DAOException {
         Connection connexion = null;
@@ -74,17 +76,20 @@ public class PhotoPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
+            quietClose( valeursAutoGenerees, preparedStatement, connexion );
         }
         return post;
     }
 
+    /**
+     * la requête SQL permettant de récupérer toutes les publications contenant une photo
+     */
     private static final String SQL_SELECT_ALL = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id";
     
     /**
-     *
-     * @return
-     * @throws DAOException
+     * récupérer toutes les publications contenant une photo
+     * @return toutes les publications contenant un lien (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<PhotoPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -104,19 +109,22 @@ public class PhotoPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( result, preparedStatement, connexion );
+            quietClose( result, preparedStatement, connexion );
         }
 
         return posts;
     }
 
+    /**
+     * la requête SQL permettant de récupérer une publication contenant une photo par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id = ?";
     
     /**
-     *
+     * récupérer une publication contenant une photo par son identifiant
      * @param id
      * @return
-     * @throws DAOException
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public PhotoPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -134,19 +142,22 @@ public class PhotoPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return post;
     }
     
+    /**
+     * la requête SQL permettant de récupérer les publications contenant une photo d'un utilisateur par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT id, date, id_human, content, photopath FROM photopost ph LEFT JOIN post p ON ph.id = p.id LEFT JOIN activity a ON ph.id = a.id WHERE id_human = ?";
     
     /**
-     *
-     * @param id_human
-     * @return
-     * @throws DAOException
+     * récupérer les publications contenant une photo d'un utilisateur par son identifiant
+     * @param id_human l'identifiant de l'utilisateur
+     * @return les publications récupérées (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<PhotoPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -167,18 +178,21 @@ public class PhotoPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return posts;
     }
 
+    /**
+     * requête SQL permettant de mettre à jour une publication contenant une photo
+     */
     private static final String SQL_UPDATE = "UPDATE photopost SET photopath = ? WHERE id = ?";
     
     /**
-     *
-     * @param post
-     * @throws DAOException
+     * mettre à jour une publication contenant une photo
+     * @param post la publication à mettre à jour
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void update(PhotoPost post) throws DAOException {
         Connection connexion = null;
@@ -194,16 +208,19 @@ public class PhotoPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
 
+    /**
+     * la requête SQL permettant de supprimer une publication contenant une photo
+     */
     private static final String SQL_DELETE= "DELETE FROM photopost WHERE id = ?";
     
     /**
-     *
-     * @param id
-     * @throws DAOException
+     * supprimer une publication contenant une photo
+     * @param id l'identifiant de la publication
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");

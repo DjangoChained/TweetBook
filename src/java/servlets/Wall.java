@@ -32,29 +32,53 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+/**
+ * Servlet qui permet de récupérer le mur de l'utilisateur (toute ses activités)
+ */
 @WebServlet(name = "Wall", urlPatterns = {"/wall"})
 public class Wall extends HttpServlet {
 
-    public static final String ATT_SESSION_USER = "sessionHuman";
-    public static final String CONF_DAO_FACTORY = "daofactory";
+    /**
+     * Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
+    /**
+     * Dao permettant de manipuler les réactions
+     */
     private ReactionActivityDao reactionDao;
+    /**
+     * Dao permettant de manipuler les publications contenant du texte
+     */
     private TextPostDao textPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant un lien
+     */
     private LinkPostDao linkPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant une photo
+     */
     private PhotoPostDao photoPostDao;
+    /**
+     * Dao permettant de manipuler les liens d'amitié
+     */
     private FriendshipActivityDao friendshipDao;
 
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException 
+     */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
-        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getReactionActivityDao();
-        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
-        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLinkPostDao();
-        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getPhotoPostDao();
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
+        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getReactionActivityDao();
+        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getTextPostDao();
+        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getLinkPostDao();
+        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getPhotoPostDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
     }
 
     private static final HashMap<Integer, String> names = new HashMap<>();
+    
     private String getHumanName(int id) {
         if(!names.containsKey(id)) {
             Human h = humanDao.get(id);
@@ -63,6 +87,13 @@ public class Wall extends HttpServlet {
         return names.get(id);
     }
 
+    /**
+     * Permet de récupérer le mur de l'utilisateur (toute ses activités)
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,7 +102,7 @@ public class Wall extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+            Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
             ArrayList<ReactionActivity> reactions = reactionDao.getByHuman(human.getId());
             ArrayList<TextPost> textPosts = textPostDao.getByHuman(human.getId());
             ArrayList<LinkPost> linkPosts = linkPostDao.getByHuman(human.getId());
@@ -143,6 +174,15 @@ public class Wall extends HttpServlet {
         }
     }
 
+    /**
+     * Permet de poster sur TweetBook.
+     * Reçois au format JSON le type de post ("type") puis toute les propriétés
+     * que contient ce type de post
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -153,7 +193,7 @@ public class Wall extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
 
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
 
         PrintWriter out = response.getWriter();
 

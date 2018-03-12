@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- *
+ * Servlet qui permet de déconnecter un utilisateur existant
  */
 @WebServlet(name = "Logout", urlPatterns = {"/user/logout"})
 public class Logout extends HttpServlet {
 
     /**
-     *
+     * Il suffit d'acceder à /user/logout pour se déconnecter
      * @param request
      * @param response
      * @throws ServletException
