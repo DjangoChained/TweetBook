@@ -5,6 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
 
+/**
+ *
+ *
+ */
 public class DAOFactory {
 
     private static final String PROPERTY_URL      = "jdbc-url";
@@ -50,31 +54,53 @@ public class DAOFactory {
      * Méthodes de récupération de l'implémentation des différents DAO (un seul
      * pour le moment)
      */
+
+    /**
+     *
+     * @return
+     */
+
     public HumanDao getHumanDao() {
-        return new HumanDaoImpl(this);
+        return new HumanDao(this);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public TextPostDao getTextPostDao() {
-        return new TextPostDaoImpl(this);
+        return new TextPostDao(this);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public LinkPostDao getLinkPostDao() {
-        return new LinkPostDaoImpl(this);
+        return new LinkPostDao(this);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public PhotoPostDao getPhotoPostDao() {
-        return new PhotoPostDaoImpl(this);
+        return new PhotoPostDao(this);
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public FriendshipActivityDao getFriendshipActivityDao() {
-        return new FriendshipActivityDaoImpl(this);
+        return new FriendshipActivityDao(this);
     }
-    
-    public LikeActivityDao getLikeActivityDao() {
-        return new LikeActivityDaoImpl(this);
-    }
-    
-    public DislikeActivityDao getDislikeActivityDao() {
-        return new DislikeActivityDaoImpl(this);
+
+    /**
+     *
+     * @return
+     */
+    public ReactionActivityDao getReactionActivityDao() {
+        return new ReactionActivityDao(this);
     }
 }

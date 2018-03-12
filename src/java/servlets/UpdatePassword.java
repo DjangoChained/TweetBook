@@ -23,20 +23,38 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "UpdatePassword", urlPatterns = {"/user/password"})
 public class UpdatePassword extends HttpServlet {
     
+    /**
+     *
+     */
     public static final String CONF_DAO_FACTORY = "daofactory";
+
+    /**
+     *
+     */
     public static final String ATT_SESSION_USER = "sessionHuman";
     private HumanDao humanDao;
     
+    /**
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
     
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
@@ -59,13 +77,14 @@ public class UpdatePassword extends HttpServlet {
                     humanDao.updatePassword(human, BCrypt.hashpw(data.getProperty("newPassword"), BCrypt.gensalt()));
                     out.print("{\"status\": \"success\"}");
                 } else {
-                    out.println("{\"status\": \"error\",\"message\": \"mauvaise combinaison email / mot de passe\"}");
+                    out.println("{\"status\": \"error\",\"message\": \"Mauvaise combinaison email / mot de passe\"}");
                 }
             } else {
                 out.println("{\"status\": \"error\"\n\"message\": \"Veuillez renseigner les mots de passe\"}");
             }
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\": \""+e.getMessage()+"\"}");
+            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la modification du mot de passe\"}");
+            log(e.getMessage());
         }
   }
 }

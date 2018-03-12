@@ -1,31 +1,47 @@
 package beans;
 
-
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author pierant
+ *
  */
 public class Human {
+    /**
+     * identifiant en base de l'utilisateur
+     */
     private int id;
+    /**
+     * nom de famille de l'utilisateur
+     */
     private String lastname;
+    /**
+     * prénom de l'utilisateur
+     */
     private String firstname;
+    /**
+     * date de naissance de l'utilisateur
+     */
     private LocalDateTime birthDate;
+    /**
+     * adresse mail de l'utilisateur
+     */
     private String email;
+    /**
+     * nom d'utilisateur
+     */
     private String username;
+    /**
+     * mot de passe de l'utilisateur
+     */
     private String password;
+    /**
+     * visibilité des publications  de l'utilisateur
+     */
     private ActivityVisibility visibility;
-    
+ 
     public Human(int id, String lastname, String firstname, LocalDateTime birthDate, String email, String username, String visibility) {
         this.id = id;
         this.lastname = lastname;
@@ -70,6 +86,10 @@ public class Human {
         this.birthDate = birthDate;
     }
     
+    /**
+     * Permet de convertir une chaîne de caractère en date pour définir la date d'anniversaire de l'utilisateur
+     * @param birthdate chaîne de caractères représentant une date et devant être au format "yyyy-MM-dd"
+     */
     public void setBirthDate(String birthdate) {
         final DateTimeFormatter formatter;
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

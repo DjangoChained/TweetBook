@@ -1,21 +1,18 @@
 package beans;
 
-
 import java.time.LocalDateTime;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author pierant
+ * Publication comportant un lien
  */
 public class LinkPost extends Post {
-    
+    /**
+     * le lien mis en avant pas la publication
+     */
     private String url;
+    /**
+     * le titre donné au contenu référé par le lien
+     */
     private String title;
     
     public LinkPost(){}

@@ -5,56 +5,54 @@
  */
 package dao;
 
-import beans.Activity;
 import beans.Reaction;
-import beans.LikeActivity;
-import static dao.DAOImpl.fermeturesSilencieuses;
-import static dao.DAOImpl.initialisationRequetePreparee;
+import beans.ReactionActivity;
+import static dao.DAO.fermeturesSilencieuses;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import static dao.DAO.initialisePreparedStatement;
 
 /**
  *
- * @author pierant
+ *
  */
-public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao {
-    private DAOFactory daoFactory;
-    
-    public LikeActivityDaoImpl(DAOFactory daoFactory){
+public class ReactionActivityDao extends BasicDao {
+    private final DAOFactory daoFactory;
+
+    public ReactionActivityDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
-    
-    private static LikeActivity map( ResultSet resultSet ) throws SQLException {
-        LikeActivity activity = new LikeActivity();
+
+    private static ReactionActivity map( ResultSet resultSet ) throws SQLException {
+        ReactionActivity activity = new ReactionActivity();
         activity.setId(resultSet.getInt( "id"));
         activity.setDate(resultSet.getTimestamp("date").toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         activity.setId_human(resultSet.getInt("id_human"));
-        activity.setReaction(Reaction.LIKE);
+        activity.setReaction(Reaction.valueOf(resultSet.getString( "reaction")));
         activity.setId_post(resultSet.getInt("id_post"));
-        
+
         return activity;
     }
-    
+
     private static final String SQL_INSERT = "INSERT INTO reactionactivity (id, reaction, id_post) VALUES (?, ?::reaction, ?)";
-    @Override
-    public LikeActivity create(LikeActivity activity) throws DAOException {
+
+    public ReactionActivity create(ReactionActivity activity) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet valeursAutoGenerees = null;
 
         try {
             int id_activity = super.createActivity(daoFactory, activity.getDate(), activity.getId_human());
-            
+
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_INSERT, true, id_activity, activity.getReaction().toString(), activity.getId_post());
+            preparedStatement = initialisePreparedStatement( connexion, SQL_INSERT, true, id_activity, activity.getReaction().toString(), activity.getId_post());
             int status = preparedStatement.executeUpdate();
             if ( status == 0 ) {
                 throw new DAOException( "Échec de la création de l'activité, aucune ligne ajoutée dans la table." );
@@ -73,14 +71,14 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
         return activity;
     }
 
-    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE r.reaction = 'like'";
-    @Override
-    public ArrayList<LikeActivity> getAll() throws DAOException {
+    private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id";
+
+    public ArrayList<ReactionActivity> getAll() throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet result = null;
-        LikeActivity activity = null;
-        ArrayList<LikeActivity> activities = new ArrayList<>();
+        ReactionActivity activity = null;
+        ArrayList<ReactionActivity> activities = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
@@ -99,17 +97,17 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
         return activities;
     }
 
-    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE a.id = ?";
-    @Override
-    public LikeActivity get(int id) throws DAOException {
+    private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE a.id = ?";
+
+    public ReactionActivity get(int id) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        LikeActivity activity = null;
+        ReactionActivity activity = null;
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID, false, id );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID, false, id );
             resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() ) {
                 activity = map( resultSet );
@@ -122,18 +120,18 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
 
         return activity;
     }
-    
-    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ? AND reaction = 'like'";
-    @Override
-    public LikeActivity get(int id_human, int id_post) throws DAOException {
+
+    private static final String SQL_SELECT_BY_HUMAN_AND_POST = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ? AND id_post = ?";
+
+    public ReactionActivity get(int id_human, int id_post) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        LikeActivity activity = null;
+        ReactionActivity activity = null;
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_HUMAN_AND_POST, false, id_human, id_post );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_HUMAN_AND_POST, false, id_human, id_post );
             resultSet = preparedStatement.executeQuery();
             if ( resultSet.next() ) {
                 activity = map( resultSet );
@@ -146,25 +144,25 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
 
         return activity;
     }
-    
-    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post FROM reactionactivity r INNER JOIN activity a ON r.id = a.id WHERE id_human = ? AND reaction = 'like'";
-    @Override
-    public ArrayList<LikeActivity> getByHuman(int id_human) throws DAOException {
+
+    private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, id_post, reaction FROM reactionactivity r LEFT JOIN activity a ON r.id = a.id WHERE id_human = ?";
+
+    public ArrayList<ReactionActivity> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        LikeActivity activity = null;
-        ArrayList<LikeActivity> activities = new ArrayList<>();
+        ReactionActivity activity = null;
+        ArrayList<ReactionActivity> activities = new ArrayList<>();
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 activity = map( resultSet );
                 activities.add(activity);
             }
-            
+
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
@@ -173,23 +171,24 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
 
         return activities;
     }
-   
-    @Override
-    public Map<Integer, LikeActivity> getHashByHuman(int id_human) throws DAOException {
+
+
+    public Map<Integer, ReactionActivity> getHashByHuman(int id_human) throws DAOException {
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        LikeActivity activity = null;
-        Map<Integer, LikeActivity> activities = new HashMap<>();
+        ReactionActivity activity = null;
+        Map<Integer, ReactionActivity> activities = new HashMap<>();
 
         try {
             connexion = daoFactory.getConnection();
-            preparedStatement = initialisationRequetePreparee( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
+            preparedStatement = initialisePreparedStatement( connexion, SQL_SELECT_BY_ID_HUMAN, false, id_human );
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 activity = map( resultSet );
                 activities.put(activity.getId(), activity);
             }
+
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
@@ -200,7 +199,7 @@ public class LikeActivityDaoImpl extends BasicDaoImpl implements LikeActivityDao
     }
 
     private static final String SQL_DELETE= "DELETE FROM reactionactivity WHERE id = ?";
-    @Override
+
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
         super.delete(daoFactory, id, SQL_DELETE);

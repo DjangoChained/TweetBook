@@ -1,16 +1,22 @@
 package beans;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 /**
- *
- * @author pierant
+ * Classe de base représentant une activité
  */
 public abstract class Activity {
+    /**
+     * identifiant en bdd de l'activité
+     */
     protected int id;
+    /**
+     * date a laquelle l'activité a été créée
+     */
     protected LocalDateTime date;
+    /**
+     * identifiant en base de l'utilisateur ayant produit l'activité
+     */
     protected int id_human;
     
     public Activity(){}

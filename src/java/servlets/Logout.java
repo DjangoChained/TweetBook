@@ -15,11 +15,18 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Logout", urlPatterns = {"/user/logout"})
 public class Logout extends HttpServlet {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Récupération et destruction de la session en cours */
