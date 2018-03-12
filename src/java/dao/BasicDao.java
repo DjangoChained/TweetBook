@@ -1,6 +1,5 @@
 package dao;
 
-import static dao.DAO.fermeturesSilencieuses;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import static dao.DAO.initialisePreparedStatement;
+import static dao.DAO.quietClose;
+import static dao.DAO.quietClose;
 
 /**
  * Classe de base comprenant des méthodes utilitaires pour les Dao 
@@ -33,7 +34,7 @@ public abstract class BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
     
@@ -68,12 +69,12 @@ public abstract class BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
     
     /**
-     *
+     * Permet de créer un post (méthode utilisée en complément d'une autre pour simuler l'héritage)
      * @param daoFactory objet permettant de se connecter à la base de données
      * @param id identifiant en base du post
      * @param content le contenu du post au format texte
@@ -95,12 +96,12 @@ public abstract class BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
     
     /**
-     *
+     * mettre à jour une activité
      * @param daoFactory objet permettant de se connecter à la base de données
      * @param date date de création de l'activité
      * @param id_human identifiant en base de l'utilisateur ayant produit l'activité
@@ -123,12 +124,12 @@ public abstract class BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
     
     /**
-     *
+     * mettre à jour un post
      * @param daoFactory objet permettant de se connecter à la base de données
      * @param id identifiant en base du post à mettre à jour
      * @param content le contenu du post au format texte
@@ -150,7 +151,7 @@ public abstract class BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
 }

@@ -1,34 +1,37 @@
 package dao;
 
 import static dao.DAO.*;
-import beans.Post;
 import beans.TextPost;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
- *
- *
+ * Implémentation du Dao gérant les publications contenant du texte
  */
 public class TextPostDao extends BasicDao {
-    private DAOFactory daoFactory;
+    private final DAOFactory daoFactory;
     
     /**
-     *
+     * permet de récupérer une connexion à la base de données
      * @param daoFactory
      */
     public TextPostDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
     
+    /**
+     * instancier une publication contenant du texte
+     * @param resultSet resultSet permmettant de récupérer les données de la publication
+     * @return la publication créée ou null
+     * @throws SQLException 
+     */
     private static TextPost map( ResultSet resultSet ) throws SQLException {
         TextPost post = new TextPost();
         post.setId(resultSet.getInt( "id"));
@@ -39,12 +42,15 @@ public class TextPostDao extends BasicDao {
         return post;
     }
     
+    /**
+     * la requête SQL permettant de créer la publication
+     */
     private static final String SQL_INSERT = "INSERT INTO textpost (id) VALUES (?)";
     
     /**
-     *
-     * @param post
-     * @throws DAOException
+     * créer la publication
+     * @param post la publication à créer
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void create(TextPost post) throws DAOException {
         Connection connexion = null;
@@ -70,16 +76,19 @@ public class TextPostDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
+            quietClose( valeursAutoGenerees, preparedStatement, connexion );
         }
     }
 
+    /**
+     * la requête SQL permettant de récupérer toutes les publications contenant du texte
+     */
     private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id";
     
     /**
-     *
+     * récupérer toutes les publications contenant du texte
      * @return
-     * @throws DAOException
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<TextPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -99,19 +108,22 @@ public class TextPostDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( result, preparedStatement, connexion );
+            quietClose( result, preparedStatement, connexion );
         }
 
         return posts;
     }
 
+    /**
+     * la requête SQL permettant de récupérer une publication contenant du texte par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id WHERE a.id = ?";
     
     /**
-     *
+     * récupérer une publication contenant du texte par son identifiant
      * @param id
      * @return
-     * @throws DAOException
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public TextPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -129,19 +141,22 @@ public class TextPostDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return post;
     }
     
+    /**
+     * la requête SQL permettant de récupérer les publications contenant du texte d'un utilisateur par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content FROM textpost t INNER JOIN post p ON t.id = p.id INNER JOIN activity a ON t.id = a.id WHERE id_human = ?";
     
     /**
-     *
-     * @param id_human
-     * @return
-     * @throws DAOException
+     * récupérer les publications contenant du texte d'un utilisateur par son identifiant
+     * @param id_human l'identifiant de l'utilisateur
+     * @return les publications récupérées (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<TextPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -162,17 +177,17 @@ public class TextPostDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return posts;
     }
     
     /**
-     *
-     * @param id_human
-     * @return
-     * @throws DAOException
+     * récupérer les publications contenant du texte d'un utilisateur par son identifiant
+     * @param id_human l'identifiant de l'utilisateur
+     * @return les publications récupérées (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public Map<Integer, TextPost> getHashByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -193,28 +208,31 @@ public class TextPostDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return posts;
     }
     
     /**
-     *
-     * @param post
-     * @throws DAOException
+     * mettre à jour une publication contenant du texte
+     * @param post la publication à mettre à jour
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void update(TextPost post) throws DAOException {
         super.updateActivity(daoFactory, post.getDate(), post.getId_human(), post.getId());
         super.updatePost(daoFactory, post.getId(), post.getContent());
     }
 
+    /**
+     * la requête SQL permettant de supprimer une publication contenant du texte
+     */
     private static final String SQL_DELETE= "DELETE FROM textpost WHERE id = ?";
     
     /**
-     *
-     * @param id
-     * @throws DAOException
+     * supprimer une publication contenant du texte
+     * @param id l'identifiant de la publication
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");

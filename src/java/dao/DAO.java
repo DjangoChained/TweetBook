@@ -13,15 +13,15 @@ public class DAO {
 
     /**
      * Permet d'initialiser une requête préparée avec des arguments
-     * @param connexion
-     * @param sql
-     * @param returnGeneratedKeys
-     * @param objets
-     * @return
-     * @throws SQLException
+     * @param connection connexion à la base de données
+     * @param sql la requête qui sera effectuée en base
+     * @param returnGeneratedKeys indique si la méthode doit renvoyer l'id qui a été généré en base
+     * @param objets tous les arguments de la requête préparée
+     * @return la requête préparée
+     * @throws SQLException lorsqu'une erreur SQL est survenue
      */
-    public static PreparedStatement initialisePreparedStatement( Connection connexion, String sql, boolean returnGeneratedKeys, Object... objets ) throws SQLException {
-        PreparedStatement preparedStatement = connexion.prepareStatement( sql, returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS );
+    public static PreparedStatement initialisePreparedStatement( Connection connection, String sql, boolean returnGeneratedKeys, Object... objets ) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement( sql, returnGeneratedKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS );
 
         for ( int i = 0; i < objets.length; i++ ) {
             preparedStatement.setObject( i + 1, objets[i] );
@@ -29,14 +29,11 @@ public class DAO {
         return preparedStatement;
     }
     
-    /* Fermeture silencieuse du resultset */
-
     /**
-     *
+     * Fermeture silencieuse du resultset
      * @param resultSet
      */
-
-    public static void fermetureSilencieuse( ResultSet resultSet ) {
+    public static void quietClose( ResultSet resultSet ) {
         if ( resultSet != null ) {
             try {
                 resultSet.close();
@@ -46,14 +43,11 @@ public class DAO {
         }
     }
 
-    /* Fermeture silencieuse du statement */
-
     /**
-     *
+     * Fermeture silencieuse du statement
      * @param statement
      */
-
-    public static void fermetureSilencieuse( Statement statement ) {
+    public static void quietClose( Statement statement ) {
         if ( statement != null ) {
             try {
                 statement.close();
@@ -63,14 +57,11 @@ public class DAO {
         }
     }
 
-    /* Fermeture silencieuse de la connexion */
-
     /**
-     *
+     * Fermeture silencieuse de la connexion
      * @param connexion
      */
-
-    public static void fermetureSilencieuse( Connection connexion ) {
+    public static void quietClose( Connection connexion ) {
         if ( connexion != null ) {
             try {
                 connexion.close();
@@ -80,31 +71,25 @@ public class DAO {
         }
     }
 
-    /* Fermetures silencieuses du statement et de la connexion */
-
     /**
-     *
+     * Fermetures silencieuses du statement et de la connexion
      * @param statement
      * @param connexion
      */
-
-    public static void fermeturesSilencieuses( Statement statement, Connection connexion ) {
-        fermetureSilencieuse( statement );
-        fermetureSilencieuse( connexion );
+    public static void quietClose( Statement statement, Connection connexion ) {
+        DAO.quietClose( statement );
+        DAO.quietClose( connexion );
     }
 
-    /* Fermetures silencieuses du resultset, du statement et de la connexion */
-
     /**
-     *
+     * Fermetures silencieuses du resultset, du statement et de la connexion
      * @param resultSet
      * @param statement
      * @param connexion
      */
-
-    public static void fermeturesSilencieuses( ResultSet resultSet, Statement statement, Connection connexion ) {
-        fermetureSilencieuse( resultSet );
-        fermetureSilencieuse( statement );
-        fermetureSilencieuse( connexion );
+    public static void quietClose( ResultSet resultSet, Statement statement, Connection connexion ) {
+        DAO.quietClose( resultSet );
+        DAO.quietClose( statement );
+        DAO.quietClose( connexion );
     }
 }

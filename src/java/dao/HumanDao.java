@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
 import beans.ActivityVisibility;
@@ -17,20 +12,28 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
- *
- *
+ * Implémentation du Dao gérant les utilisateurs
  */
 public class HumanDao extends BasicDao {
+    /**
+     * permet de récupérer une connexion à la base de données
+     */
     private final DAOFactory daoFactory;
     
     /**
-     *
-     * @param daoFactory
+     * Constucteur du Dao gérant les utilisateurs
+     * @param daoFactory Classe permettant de récupérer une connexion à la base de données
      */
     public HumanDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
     
+    /**
+     * instancier un utilisateur
+     * @param result resultSet permmettant de récupérer les données d'un utilisateur
+     * @return l'utilisateur créé ou null
+     * @throws SQLException lorsqu'une erreur SQL est survenue
+     */
     private static Human map( ResultSet result ) throws SQLException {
         Human human = new Human();
         human.setId( result.getInt( "id" ) );
@@ -45,12 +48,15 @@ public class HumanDao extends BasicDao {
         return human;
     }
     
+    /**
+     * la requête SQL permettant de créer un utilisateur
+     */
     private static final String SQL_INSERT = "INSERT INTO human (lastname, firstname, birthdate, email, username, password, activityvisibility) VALUES (?, ?, ?, ?, ?, ?, ?::activityvisibility)";
     
     /**
-     *
-     * @param human
-     * @throws DAOException
+     * créer un utilisateur
+     * @param human l'utilisateur à créer
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void create(Human human) throws DAOException {
         Connection connexion = null;
@@ -77,16 +83,19 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
+            quietClose( valeursAutoGenerees, preparedStatement, connexion );
         }
     }
     
+    /**
+     * la requête SQL permettant de récupérer tous les utilisateurs
+     */
     private static final String SQL_SELECT_ALL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human";
     
     /**
-     *
-     * @return
-     * @throws DAOException
+     * récupérer tous les utilisateurs
+     * @return tous les utilisateurs récupérés (ou une ArrayListe vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<Human> getAll() throws DAOException {
         Connection connexion = null;
@@ -106,19 +115,22 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( result, preparedStatement, connexion );
+            quietClose( result, preparedStatement, connexion );
         }
 
         return humans;
     }
     
+    /**
+     * requête SQL permettant de récupérer un utilisateur par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE id = ?";
     
     /**
-     *
-     * @param id
-     * @return
-     * @throws DAOException
+     * récupérer un utilisateur par son identifiant
+     * @param id l'identifiant en base de l'utilisateur
+     * @return l'utilisateur récupéré ou null
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public Human get(int id) throws DAOException {
         Connection connexion = null;
@@ -138,19 +150,22 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return human;
     }
     
+    /**
+     * requête SQL permettant de récupérer un utilisateur par son adresse mail(qui est unique en base)
+     */
     private static final String SQL_SELECT_BY_EMAIL = "SELECT id, lastname, firstname, birthdate, email, username, password, activityvisibility FROM human WHERE email = ?";
     
     /**
-     *
-     * @param email
-     * @return
-     * @throws DAOException
+     * récupérer un utilisateur par son adresse mail
+     * @param email adresse mail de l'utilisateur
+     * @return l'utilisateur récupéré ou null
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public Human get(String email) throws DAOException {
         Connection connexion = null;
@@ -170,17 +185,17 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return human;
     }
     
     /**
-     *
-     * @param friends_ids
-     * @return
-     * @throws DAOException
+     * récupérer tous les amis d'un utilisateur à partir de leur identifiant
+     * @param friends_ids les identifiants des amis de l'utilisateur
+     * @return les amis récupérés (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<Human> getFriends(ArrayList<Integer> friends_ids) throws DAOException {
         ArrayList<Human> humans = new ArrayList<>();
@@ -194,12 +209,15 @@ public class HumanDao extends BasicDao {
         return humans;
     }
     
+    /**
+     * la requête SQL permettant de mettre à jour un utilisateur
+     */
     private static final String SQL_UPDATE = "UPDATE human SET lastname = ?, firstname = ?, birthdate = ?, email = ?, username = ?, activityvisibility = ?::activityvisibility WHERE id = ?";
     
     /**
-     *
-     * @param human
-     * @throws DAOException
+     * mettre à jour un utilisateur
+     * @param human l'utilisateur à mettre à jour
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void update(Human human) throws DAOException {
         Connection connexion = null;
@@ -219,28 +237,33 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
-
+    
+    /**
+     * requête SQL permattant de supprimer un utilisateur
+     */
     private static final String SQL_DELETE= "DELETE FROM human WHERE id = ?";
     
     /**
-     *
+     * supprimer un utilisateur
      * @param id
-     * @throws DAOException
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, SQL_DELETE);
     }
     
-    private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
-    
     /**
-     *
-     * @param human
-     * @param password
-     * @throws DAOException
+     * la requête SQL permettant de mettre à jour le mot de passe d'un utilisateur
+     */
+    private static final String SQL_UPDATE_PASSWORD= "UPDATE human SET password = ? WHERE id = ?";
+    /**
+     * mettre à jour le mot de passe d'un utilisateur
+     * @param human l'utilisateur dont le mot de passe va être mis à jour
+     * @param password le nouveau mot de passe de l'utilisateur
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void updatePassword(Human human, String password) throws DAOException {
         Connection connexion = null;
@@ -254,7 +277,7 @@ public class HumanDao extends BasicDao {
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
 }

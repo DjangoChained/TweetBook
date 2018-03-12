@@ -6,8 +6,7 @@ import java.sql.SQLException;
 import javax.servlet.ServletContext;
 
 /**
- *
- *
+ * Classe permettant d'instancier les Dao
  */
 public class DAOFactory {
 
@@ -16,17 +15,29 @@ public class DAOFactory {
     private static final String PROPERTY_USERNAME = "jdbc-username";
     private static final String PROPERTY_PASSWORD = "jdbc-password";
 
+    /**
+     * L'url, le nom d'utilisateur et le mot de passe permettant de se connecter à la base de données
+     */
     private final String url, username, password;
 
+    /**
+     * Constructeur de la DaoFactory
+     * @param url url permmettant de se connecter à la base de données
+     * @param username nom d'utilisateur permmettant de se connecter à la base de données
+     * @param password mot de passe permmettant de se connecter à la base de données
+     */
     DAOFactory( String url, String username, String password ) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
-    /*
+    /**
      * Méthode chargée de récupérer les informations de connexion à la base de
      * données, charger le driver JDBC et retourner une instance de la Factory
+     * @param context le contexte de l'application web
+     * @return une instance de la DAOFactory
+     * @throws DAOConfigurationException 
      */
     public static DAOFactory getInstance(ServletContext context) throws DAOConfigurationException {
         String url, driver, username, password;
@@ -45,60 +56,58 @@ public class DAOFactory {
         return instance;
     }
 
-    /* Méthode chargée de fournir une connexion à la base de données */
-     /* package */ Connection getConnection() throws SQLException {
+    /**
+     * Méthode chargée de fournir une connexion à la base de données 
+     * @return la connexion à la base de données
+     * @throws SQLException lorsque qu'une erreur SQL est survenue
+     */
+    Connection getConnection() throws SQLException {
         return DriverManager.getConnection( url, username, password );
     }
-
-    /*
-     * Méthodes de récupération de l'implémentation des différents DAO (un seul
-     * pour le moment)
-     */
-
+    
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les utilisateurs
+     * @return Dao gérant les utilisateurs
      */
-
     public HumanDao getHumanDao() {
         return new HumanDao(this);
     }
 
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant du texte
+     * @return Dao gérant les post contenant du texte
      */
     public TextPostDao getTextPostDao() {
         return new TextPostDao(this);
     }
 
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant un lien
+     * @return Dao gérant les post contenant un lien
      */
     public LinkPostDao getLinkPostDao() {
         return new LinkPostDao(this);
     }
 
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant une photo
+     * @return Dao gérant les post contenant une photo
      */
     public PhotoPostDao getPhotoPostDao() {
         return new PhotoPostDao(this);
     }
 
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les amis
+     * @return Dao gérant les amis
      */
     public FriendshipActivityDao getFriendshipActivityDao() {
         return new FriendshipActivityDao(this);
     }
 
     /**
-     *
-     * @return
+     * Méthode de récupération de l'implémentation du Dao gérant les réactions à des posts
+     * @return Dao gérant les réactions à des posts
      */
     public ReactionActivityDao getReactionActivityDao() {
         return new ReactionActivityDao(this);

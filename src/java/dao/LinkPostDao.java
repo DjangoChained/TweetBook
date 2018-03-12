@@ -1,40 +1,38 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dao;
 
-import beans.Post;
 import beans.LinkPost;
-import static dao.DAO.fermeturesSilencieuses;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import static dao.DAO.initialisePreparedStatement;
+import static dao.DAO.quietClose;
 
 /**
- *
- *
+ * Implémentation du Dao gérant les publications contenant un lien
  */
 public class LinkPostDao extends BasicDao{
-    private DAOFactory daoFactory;
+    private final DAOFactory daoFactory;
     
     /**
-     *
+     * permet de récupérer une connexion à la base de données
      * @param daoFactory
      */
     public LinkPostDao(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
     
+    /**
+     * instancier une publication contenant un lien
+     * @param resultSet resultSet permmettant de récupérer les données de la publication
+     * @return la publication créée ou null
+     * @throws SQLException 
+     */
     private static LinkPost map( ResultSet resultSet ) throws SQLException {
         LinkPost post = new LinkPost();
         post.setId(resultSet.getInt( "id"));
@@ -47,13 +45,16 @@ public class LinkPostDao extends BasicDao{
         return post;
     }
     
+    /**
+     * la requête SQL permettant de créer la publication
+     */
     private static final String SQL_INSERT = "INSERT INTO linkpost (id, url, title) VALUES (?, ?, ?)";
     
     /**
-     *
-     * @param post
-     * @return
-     * @throws DAOException
+     * la créer la publication
+     * @param post la publication à créer
+     * @return la publication créée ou null
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public LinkPost create(LinkPost post) throws DAOException {
         Connection connexion = null;
@@ -79,17 +80,20 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( valeursAutoGenerees, preparedStatement, connexion );
+            quietClose( valeursAutoGenerees, preparedStatement, connexion );
         }
         return post;
     }
 
+    /**
+     * la requête SQL permettant de récupérer toutes les publications contenant un lien
+     */
     private static final String SQL_SELECT_ALL = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id";
     
     /**
-     *
-     * @return
-     * @throws DAOException
+     * récupérer toutes les publications contenant un lien
+     * @return toutes les publications contenant un lien (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<LinkPost> getAll() throws DAOException {
         Connection connexion = null;
@@ -109,19 +113,22 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( result, preparedStatement, connexion );
+            quietClose( result, preparedStatement, connexion );
         }
 
         return posts;
     }
 
+    /**
+     * la requête SQL permettant de récupérer une publication contenant un lien par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE a.id = ?";
     
     /**
-     *
-     * @param id
-     * @return
-     * @throws DAOException
+     * récupérer une publication contenant un lien par son identifiant
+     * @param id l'dentifiant de la publication
+     * @return la publication récupérée ou null
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public LinkPost get(int id) throws DAOException {
         Connection connexion = null;
@@ -139,19 +146,22 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return post;
     }
     
+    /**
+     * la requête SQL permettant de récupérer les publications contenant un lien d'un utilisateur par son identifiant
+     */
     private static final String SQL_SELECT_BY_ID_HUMAN = "SELECT a.id as id, date, id_human, content, url, title FROM linkpost l LEFT JOIN post p ON l.id = p.id LEFT JOIN activity a ON l.id = a.id WHERE id_human = ?";
     
     /**
-     *
-     * @param id_human
-     * @return
-     * @throws DAOException
+     * récupérer les publications contenant un lien d'un utilisateur par son identifiant
+     * @param id_human l'identifiant de l'utilisateur
+     * @return les publications récupérées (ou une ArrayList vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public ArrayList<LinkPost> getByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -172,17 +182,17 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return posts;
     }
     
     /**
-     *
-     * @param id_human
-     * @return
-     * @throws DAOException
+     * récupérer les publications contenant un lien d'un utilisateur par son identifiant
+     * @param id_human l'identifiant de l'utilisateur
+     * @return les publications récupérées (ou une HashMap vide)
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public Map<Integer, LinkPost> getHashByHuman(int id_human) throws DAOException {
         Connection connexion = null;
@@ -203,18 +213,21 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
 
         return posts;
     }
 
+    /**
+     * requête SQL permettant de mettre à jour une publication contenant un lien
+     */
     private static final String SQL_UPDATE = "UPDATE linkpost SET url = ?, title = ? WHERE id = ?";
     
     /**
-     *
-     * @param post
-     * @throws DAOException
+     * mettre à jour une publication contenant un lien
+     * @param post la publication à mettre à jour
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void update(LinkPost post) throws DAOException {
         Connection connexion = null;
@@ -230,16 +243,19 @@ public class LinkPostDao extends BasicDao{
         } catch ( SQLException e ) {
             throw new DAOException( e );
         } finally {
-            fermeturesSilencieuses( resultSet, preparedStatement, connexion );
+            quietClose( resultSet, preparedStatement, connexion );
         }
     }
 
+    /**
+     * la requête SQL permettant de supprimer une publication contenant un lien
+     */
     private static final String SQL_DELETE= "DELETE FROM linkpost WHERE id = ?";
     
     /**
-     *
-     * @param id
-     * @throws DAOException
+     * supprimer une publication contenant un lien
+     * @param id l'identifiant de la publication
+     * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public void delete(int id) throws DAOException {
         super.delete(daoFactory, id, "DELETE FROM activity WHERE id = ?");
