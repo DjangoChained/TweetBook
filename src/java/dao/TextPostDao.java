@@ -144,7 +144,6 @@ public class TextPostDao extends BasicDao {
      * @throws DAOException
      */
     public ArrayList<TextPost> getByHuman(int id_human) throws DAOException {
-        System.out.println("entré dans textpost avec id_human = "+id_human);
         Connection connexion = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

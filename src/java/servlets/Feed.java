@@ -102,10 +102,6 @@ public class Feed extends HttpServlet {
                 friends.putAll(friendshipDao.getHashByHuman(curHuman.getId()));
             }
 
-            out.print("{" +
-                            "    \"status\": \"success\"," +
-                            "    \"activities\": [");
-
             for(Map.Entry<Integer, ReactionActivity> reaction : reactions.entrySet()) {
                 Human author = humanDao.get(reaction.getValue().getId_human());
                 int post_author_id = -1;
@@ -120,7 +116,7 @@ public class Feed extends HttpServlet {
                 Human post_author = humanDao.get(post_author_id);
                 res.add("{" +
                             "   \"type\": \"reaction\", " +
-                            "   \"reaction:\": \""+reaction.getValue().getReaction().toString()+"\", " +
+                            "   \"reaction\": \""+reaction.getValue().getReaction().toString()+"\", " +
                             "   \"id\": \""+reaction.getValue().getId()+"\", " +
                             "   \"date\": \""+reaction.getValue().getDate()+"\", " +
                             "   \"id_post\": \""+reaction.getValue().getId_post()+"\", " +

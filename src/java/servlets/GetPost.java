@@ -65,7 +65,7 @@ public class GetPost extends HttpServlet {
                 Human human = humanDao.get(photopost.getId_human());
                 out.println(photopost.getJson()+
                 "    \"type\": \"photo\",\n" +
-                "    \"url\": \"/"+photopost.getPhotoPath()+"\"\n"
+                "    \"url\": \"/"+photopost.getPhotoPath()+"\"\n" +
                 "    \"authorname\": \"" + human.getFirstName() + " " + human.getLastName() + "\"}}");
             } else if (linkpost != null) {
                 Human human = humanDao.get(linkpost.getId_human());

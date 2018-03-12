@@ -70,6 +70,7 @@ public class Reaction extends HttpServlet {
 
                 if(reac != null && reac.getReaction() != reaction)
                     reactionDao.delete(reac.getId());
+                else reac = new ReactionActivity();
                 reac.setDate(LocalDateTime.now());
                 reac.setId_human(id_human);
                 reac.setId_post(id_post);

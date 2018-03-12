@@ -48,7 +48,6 @@ public class Friends extends HttpServlet {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -66,6 +65,13 @@ public class Friends extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         ArrayList<Human> friends = humanDao.getFriends(friendshipDao.getFriends(human.getId()));
+        for (int a : friendshipDao.getFriends(human.getId())){
+            log ("id ami dans boucle int: "+a);
+        }
+        for (Human a : friends){
+            log("username :" +a.getUsername());
+        }
+        
         
         ArrayList<String> res = new ArrayList<>();
             

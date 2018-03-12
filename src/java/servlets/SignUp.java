@@ -1,5 +1,6 @@
 package servlets;
 
+import beans.ActivityVisibility;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -85,6 +86,7 @@ public class SignUp extends HttpServlet {
         String password = data.getProperty("password");
         String username = data.getProperty("username");
         Human human = new Human();
+        human.setVisibility(ActivityVisibility.friends);
         
         try {
             firstnameProcess(firstname, human);

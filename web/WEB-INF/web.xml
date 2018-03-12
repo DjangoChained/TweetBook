@@ -12,7 +12,7 @@
     <context-param>
         <description>URL de connexion à la base de données JDBC</description>
         <param-name>jdbc-url</param-name>
-        <param-value>jdbc:postgresql://</param-value>
+        <param-value>jdbc:postgresql://localhost/tweetbase</param-value>
     </context-param>
     <context-param>
         <description>Driver JDBC utilisé pour la connexion à la base de données</description>
@@ -22,12 +22,12 @@
     <context-param>
         <description>Nom d'utilisateur qu'utilisera TweetBook pour se connecter à la base de données</description>
         <param-name>jdbc-username</param-name>
-        <param-value></param-value>
+        <param-value>tweetbook</param-value>
     </context-param>
     <context-param>
         <description>Mot de passe associé au nom d'utilisateur pour la connexion à la base de données.</description>
         <param-name>jdbc-password</param-name>
-        <param-value></param-value>
+        <param-value>tweetbook</param-value>
     </context-param>
     <filter>
         <description>Filtre assurant la restriction de certaines portions de l'API JSON aux seuls utilisateurs authentifiés.</description>
