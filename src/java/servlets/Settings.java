@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.Human;
@@ -29,29 +24,23 @@ import javax.servlet.http.HttpServletResponse;
 public class Settings extends HttpServlet {
 
     /**
-     *
+     * Le dao qui permet de manipuler les utilisateurs
      */
-    public static final String ATT_SESSION_USER = "sessionHuman";
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
     private HumanDao humanDao;
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
     
     /**
-     *
-     * @param request
-     * @param response
+     * Permet de récupérer les information personnelles d'un utilisateur au format JSON.
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -60,7 +49,7 @@ public class Settings extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         if (human != null){
@@ -82,9 +71,11 @@ public class Settings extends HttpServlet {
     }
     
     /**
-     *
-     * @param request
-     * @param response
+     * Permet de mettre à jour les informations personnelles de l'utilisateur connecté
+     * Reçois au format JSON le nom ("lastname"), prénom ("firstname"), date de naissance ("birthdate"),
+     * nom d'utilisateur ("username"), l'adresse mail ("email") et la visibilité des publications ("visibility")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -100,7 +91,7 @@ public class Settings extends HttpServlet {
         
         PrintWriter out = response.getWriter();
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         human.setFirstName(data.getProperty("firstname"));
         human.setLastName(data.getProperty("lastname"));
         human.setBirthDate(data.getProperty("birthdate"));

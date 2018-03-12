@@ -10,10 +10,7 @@ import dao.DAOFactory;
  * Classe permettant d'initialiser l'objet qui instancie les Dao 
  */
 public class InitialiseDaoFactory implements ServletContextListener {
-    /**
-     * le nom de l'objet qui instancie les Dao
-     */
-    private static final String ATT_DAO_FACTORY = "daofactory";
+    
     private DAOFactory daoFactory;
 
     /**
@@ -23,6 +20,6 @@ public class InitialiseDaoFactory implements ServletContextListener {
     public void contextInitialized( ServletContextEvent event ) {
         ServletContext servletContext = event.getServletContext();
         this.daoFactory = DAOFactory.getInstance(servletContext);
-        servletContext.setAttribute( ATT_DAO_FACTORY, this.daoFactory );
+        servletContext.setAttribute("daofactory", this.daoFactory );
     }
 }

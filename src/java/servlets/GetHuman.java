@@ -17,35 +17,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet de récupérer un utilisateur
  */
 @WebServlet(name = "getHuman", urlPatterns = {"/user"})
 public class GetHuman extends HttpServlet {
-
     /**
-     *
+     * Le Dao qui permet de manipuler les utilisateurs
      */
-    public static final String CONF_DAO_FACTORY = "daofactory";
-    
     private HumanDao humanDao;
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
     /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * permet de récupérer un utilisateur par son identifiant
+     * Reçois au format JSON l'identifiant de l'utilisateur qu'on souhaite récupérer ("id")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

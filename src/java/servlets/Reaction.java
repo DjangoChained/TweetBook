@@ -18,36 +18,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet de poster ou de supprimer une réaction à un post
  */
 @WebServlet(name = "Reaction", urlPatterns = {"/reaction"})
 public class Reaction extends HttpServlet {
 
-    /**
-     *
-     */
-    public static final String ATT_SESSION_USER = "sessionHuman";
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
     private ReactionActivityDao reactionDao;
 
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getReactionActivityDao();
+        this.reactionDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getReactionActivityDao();
     }
 
     /**
-     *
-     * @param request
-     * @param response
+     * Permet de poster une réaction.
+     * Reçois au format JSON l'identifiant du post auquel l'utilisateur souhaite réagir ("id_post")
+     * et la reaction à proprement parler ("reaction" -> 'like' ou 'dislike')
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -58,7 +50,7 @@ public class Reaction extends HttpServlet {
         BufferedReader reader = request.getReader();
         Gson gson = new Gson();
         Properties data = gson.fromJson(reader, Properties.class);
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         PrintWriter out = response.getWriter();
 
         try {
@@ -85,9 +77,10 @@ public class Reaction extends HttpServlet {
     }
 
     /**
-     *
-     * @param request
-     * @param response
+     * Permet de supprimer une réaction
+     * Reçois au format JSON l'identifiant du post auquel fait référence la réaction ("id_post")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -98,7 +91,7 @@ public class Reaction extends HttpServlet {
         BufferedReader reader = request.getReader();
         Gson gson = new Gson();
         Properties data = gson.fromJson(reader, Properties.class);
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         PrintWriter out = response.getWriter();
         try {
                 int id_human = human.getId();

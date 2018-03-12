@@ -31,36 +31,35 @@ import javax.servlet.http.HttpSession;
 import config.ConnectionTools;
 
 /**
- *
- *
+ * Servlet qui permet à un utilisateur de s'inscrire
  */
 @WebServlet(name = "SignUp", urlPatterns = {"/user/register"})
 public class SignUp extends HttpServlet {
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
-
-    /**
-     *
-     */
-    public static final String ATT_SESSION_USER = "sessionHuman";
     
+    /**
+     * le Dao qui permet de manipuler les utilisateurs 
+     */
     private HumanDao humanDao;
+    /**
+     * contiendra des erreurs si les données fournies dans le formulaire
+     * d'inscription sont incorrectes
+     */
     private final Map<String, String> errors = new HashMap<>();
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
     /**
-     *
+     * Permet à un utilisateur de s'inscrire.
+     * Reçois au format JSON le nom ("lastname"), prénom ("firstname"), date de naissance ("birthdate"),
+     * nom d'utilisateur ("username"), l'adresse mail ("email"). La visibilité des publications sera
+     * limitée aux amis par défaut
      * @param request
      * @param response
      * @throws ServletException
@@ -98,7 +97,7 @@ public class SignUp extends HttpServlet {
 
             if ( errors.isEmpty() ) {
                 humanDao.create(human);
-                session.setAttribute( ATT_SESSION_USER, human );
+                session.setAttribute( "sessionHuman", human );
                 out.println("{ \"status\": \"success\"}");
             } else {
                 out.print("{\"status\": \"error\",\"message\": \"");
@@ -111,12 +110,25 @@ public class SignUp extends HttpServlet {
         }
     }
     
+    /**
+     * Méthode utilitaire pour s'assurer qu'un nom fourni est non nul et fait
+     * plus de 3 caractères de long
+     * @param name le nom fourni par l'utilisateur
+     * @param type le nom du champ qui varie en fonction des cas
+     * @throws Exception lorsque le nom fournit ne répond pas aux critères
+     */
     private void nameValidation( String name, String type ) throws Exception {
         if ( name == null || name.length() < 3 ) {
             throw new Exception( "Le " + type + " doit contenir au moins 3 caractères." );
         }
     }
     
+    /**
+     * Méthode utilitaire pour s'assurer qu'une date fournie est non nulle
+     * et est au bon format
+     * @param date la date fournie par l'utilisateur
+     * @throws Exception lorsque la date fournie ne répond pas au critères
+     */
     private void birthdateValidation(String date) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setLenient(false);
@@ -127,6 +139,12 @@ public class SignUp extends HttpServlet {
         }
     }
     
+    /**
+     * Méthode utilitaire s'assurant que le prénom fourni répond aux critères
+     * et qui envoie une erreur dans le cas contraire
+     * @param firstname le prénom fourni par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void firstnameProcess(String firstname, Human human) {
         try {
            nameValidation( firstname, "prénom" );
@@ -136,6 +154,12 @@ public class SignUp extends HttpServlet {
        }
     }
 
+    /**
+     * Méthode utilitaire s'assurant que le nom fourni répond aux critères
+     * et qui envoie une erreur dans le cas contraire
+     * @param lastname le nom fourni par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void lastnameProcess(String lastname, Human human) {
         try {
            nameValidation( lastname, "nom de famille" );
@@ -145,6 +169,12 @@ public class SignUp extends HttpServlet {
        }
     }
     
+    /**
+     * Méthode utilitaire s'assurant que la date fourni répond aux critères
+     * et qui envoie une erreur dans le cas contraire
+     * @param date la date fournie par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void birthdateProcess(String date, Human human) {
         LocalDateTime res = null;
         try {
@@ -158,6 +188,12 @@ public class SignUp extends HttpServlet {
         }
     }
     
+    /**
+     * Méthode utilitaire s'assurant que l'adresse mail fournie répond aux
+     * critères et qui envoie une erreur dans le cas contraire
+     * @param email adresse mail fournie par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void emailProcess(String email, Human human) {
         try {
             ConnectionTools.emailValidation(email, true, humanDao);
@@ -167,6 +203,12 @@ public class SignUp extends HttpServlet {
         }
     }
    
+    /**
+     * Méthode utilitaire s'assurant que le nom d'utilisateur fourni répond 
+     * aux critères et qui envoie une erreur dans le cas contraire
+     * @param username le nom d'utilisateur fourni par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void usernameProcess(String username, Human human) {
         try {
             nameValidation( username, "nom d'utilisateur" );
@@ -176,6 +218,12 @@ public class SignUp extends HttpServlet {
         }
     }
 
+    /**
+     * Méthode utilitaire s'assurant que le mot de passe fourni répond
+     * aux critères et qui envoie une erreur dans le cas contraire
+     * @param password le mot de passe fourni par l'utilisateur
+     * @param human l'utilisateur qui souhaite s'inscrire
+     */
     private void passwordProcess(String password, Human human) {
         try {
             ConnectionTools.passwordValidation(password);

@@ -25,42 +25,38 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "Friends", urlPatterns = {"/friends"})
 public class Friends extends HttpServlet {
-    
     /**
-     *
+     * Dao permettant de manipuler les liens d'amitié
      */
-    public static final String ATT_SESSION_USER = "sessionHuman";
-
-    /**
-     *
-     */
-    public static final String CONF_DAO_FACTORY = "daofactory";
     private FriendshipActivityDao friendshipDao;
+    /**
+     * Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Permet de récupérer les identifiants, noms et prénoms des amis de l'utilisateur connecté au format Json
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
@@ -87,9 +83,10 @@ public class Friends extends HttpServlet {
 }
 
     /**
-     *
-     * @param request
-     * @param response
+     * Permet d'ajouter un ami.
+     * Reçois au format JSON l'identifiant de l'utilisateur à ajouter en ami ("id_friend")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -103,7 +100,7 @@ public class Friends extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
@@ -122,9 +119,10 @@ public class Friends extends HttpServlet {
     }
     
     /**
-     *
-     * @param request
-     * @param response
+     * Permet de retirer un utilisateur de sa liste d'amis.
+     * Reçois au format JSON l'identifiant de l'utilisateur à retirer des amis ("id_friend")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
      * @throws ServletException
      * @throws IOException
      */
@@ -139,7 +137,7 @@ public class Friends extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         

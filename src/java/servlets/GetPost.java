@@ -18,27 +18,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet de récupérer un post
  */
 @WebServlet(name = "getPost", urlPatterns = {"/post"})
 public class GetPost extends HttpServlet {
 
-    public static final String CONF_DAO_FACTORY = "daofactory";
-
+    /**
+     * Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
+    /**
+     * Dao permettant de manipuler les publications contenant du texte
+     */
     private TextPostDao textPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant un lien
+     */
     private LinkPostDao linkPostDao;
+    /**
+     * Dao permettant de manipuler les publications contenant une photo
+     */
     private PhotoPostDao photoPostDao;
 
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException 
+     */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
-        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getTextPostDao();
-        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getLinkPostDao();
-        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getPhotoPostDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
+        this.textPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getTextPostDao();
+        this.linkPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getLinkPostDao();
+        this.photoPostDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getPhotoPostDao();
     }
 
+    /**
+     * Permet de récupérer un post par son identifiant
+     * Reçois au format JSON l'identifiant du post que l'on souhaite récupérer ("id")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

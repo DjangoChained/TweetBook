@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.Human;
@@ -22,34 +17,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- *
+ * Servlet qui permet à l'utilisateur de modifier son mot de passe
  */
 @WebServlet(name = "UpdatePassword", urlPatterns = {"/user/password"})
 public class UpdatePassword extends HttpServlet {
     
     /**
-     *
+     * Le Dao permettant de manipuler les utilisateurs
      */
-    public static final String CONF_DAO_FACTORY = "daofactory";
-
-    /**
-     *
-     */
-    public static final String ATT_SESSION_USER = "sessionHuman";
     private HumanDao humanDao;
     
     /**
-     *
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
     
     /**
-     *
+     * Permet à un utilisateur de modifier son mot de passe
+     * Reçois au format JSON le mot de passe actuel de l'utilisateur ("currentPassword") et le nouveau ("newPassword")
      * @param request
      * @param response
      * @throws ServletException
@@ -65,7 +54,7 @@ public class UpdatePassword extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         

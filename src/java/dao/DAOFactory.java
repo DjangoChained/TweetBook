@@ -10,11 +10,6 @@ import javax.servlet.ServletContext;
  */
 public class DAOFactory {
 
-    private static final String PROPERTY_URL      = "jdbc-url";
-    private static final String PROPERTY_DRIVER   = "jdbc-driver";
-    private static final String PROPERTY_USERNAME = "jdbc-username";
-    private static final String PROPERTY_PASSWORD = "jdbc-password";
-
     /**
      * L'url, le nom d'utilisateur et le mot de passe permettant de se connecter à la base de données
      */
@@ -41,10 +36,10 @@ public class DAOFactory {
      */
     public static DAOFactory getInstance(ServletContext context) throws DAOConfigurationException {
         String url, driver, username, password;
-        url = context.getInitParameter( PROPERTY_URL );
-        driver = context.getInitParameter( PROPERTY_DRIVER );
-        username = context.getInitParameter( PROPERTY_USERNAME );
-        password = context.getInitParameter(PROPERTY_PASSWORD );
+        url = context.getInitParameter("jdbc-url");
+        driver = context.getInitParameter("jdbc-driver");
+        username = context.getInitParameter("jdbc-username");
+        password = context.getInitParameter("jdbc-password");
 
         try {
             Class.forName( driver );
