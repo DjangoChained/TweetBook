@@ -132,7 +132,8 @@ public class Wall extends HttpServlet {
             out.print(String.join(",", res));
             out.print("]}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du wall.\"}");   
+            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du wall.\"}"); 
+            log(e.getMessage());
         }
     }
     
@@ -161,6 +162,7 @@ public class Wall extends HttpServlet {
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
+                log(e.getMessage());
             }
         } else if (data.getProperty("type").equals("link")){
             try {
@@ -175,6 +177,7 @@ public class Wall extends HttpServlet {
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
+                log(e.getMessage());
             }
         } else if (data.getProperty("type").equals("photo")){
             try {
@@ -188,6 +191,7 @@ public class Wall extends HttpServlet {
                 out.println("{\"status\": \"success\",\n\"id\": \""+post.getId()+"\")}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la création du post\"}");
+                log(e.getMessage());
             }
         } else {
             out.println("{\"status\": \"error\",\n\"message\": \"Un type de publication invalide a été spécifié.\"}");

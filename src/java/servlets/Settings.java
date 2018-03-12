@@ -45,7 +45,6 @@ public class Settings extends HttpServlet {
      */
     @Override
     public void init() throws ServletException {
-        
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
     
@@ -63,7 +62,8 @@ public class Settings extends HttpServlet {
         
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
         
-        try (PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+        if (human != null){
             out.println("{\n" +
                         "    \"status\": \"success\",\n" +
                         "    \"user\": {\n" +
@@ -76,6 +76,8 @@ public class Settings extends HttpServlet {
                         "        \"visibility\": \""+human.getVisibility().toString()+"\"\n" +
                         "    }\n" +
                         "}");
+        } else {
+            out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la récupération des informations personnelles.\"}");
         }
     }
     
@@ -96,6 +98,8 @@ public class Settings extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
+        PrintWriter out = response.getWriter();
+        
         Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
         human.setFirstName(data.getProperty("firstname"));
         human.setLastName(data.getProperty("lastname"));
@@ -106,13 +110,10 @@ public class Settings extends HttpServlet {
         
         try {
             humanDao.update(human);
-            try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\"}");
-            }
+            out.println("{\"status\": \"success\",\n\"id\": \""+human.getId()+"\"}");
         } catch (DAOException e){
-            try (PrintWriter out = response.getWriter()) {
-                out.println("{\"status\": \"error\",\n\"message\": \""+e.getMessage().replace("\"", "\\\"").replace("\n", "")+"\"}");
-            }
+            out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la modifications des informations personnelles.\"}");
+            log(e.getMessage().replace("\"", "\\\"").replace("\n", ""));
         }
   }
 }

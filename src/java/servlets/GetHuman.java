@@ -39,7 +39,6 @@ public class GetHuman extends HttpServlet {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -53,36 +52,30 @@ public class GetHuman extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
 
-        try (PrintWriter out = response.getWriter()) {
-            int humanId = -1;
-            
-            try {
-               humanId = Integer.parseInt(request.getParameter("id"));
-            } catch(NumberFormatException e){
-                out.println("{\n" +
-"    \"status\": \"error\",\n" +
-"    \"message\": \"Veuillez entrer un entier valide\"\n" +
-"}");
-            }
-            
-            if (humanId != -1){
-                Human human = humanDao.get(humanId);
-                if(human != null){
-                    out.println("{\n" +
-                                "    \"status\": \"success\",\n" +
-                                "    \"user\": {\n" +
-                            "        \"id\": \""+human.getId()+"\",\n" +
-                            "        \"firstName\": \""+human.getFirstName()+"\",\n" +
-                            "        \"lastName\": \""+human.getLastName()+"\"\n" +
-                            "    }\n" +
-                            "}");
-                } else {
-                out.println("{\n" +
-"    \"status\": \"error\",\n" +
-"    \"message\": \"Il n'existe aucun utilisateur avec cet identifiant\"\n" +
-"}");
-                }
-            } 
+        int humanId = -1;
+        PrintWriter out = response.getWriter();
+
+        try {
+           humanId = Integer.parseInt(request.getParameter("id"));
+        } catch(NumberFormatException e){
+            out.println("{\"status\": \"error\",\"message\": \"Veuillez entrer un entier valide\"}");
+            log(e.getMessage());
         }
+
+        if (humanId != -1){
+            Human human = humanDao.get(humanId);
+            if(human != null){
+                out.println("{" +
+                            "    \"status\": \"success\",\n" +
+                            "    \"user\": {\n" +
+                        "        \"id\": \""+human.getId()+"\",\n" +
+                        "        \"firstName\": \""+human.getFirstName()+"\",\n" +
+                        "        \"lastName\": \""+human.getLastName()+"\"\n" +
+                        "    }" +
+                        "}");
+            } else {
+                out.println("{\"status\": \"error\",\"message\": \"Il n'existe aucun utilisateur avec cet identifiant\"}");
+            }
+        } 
     }
 }

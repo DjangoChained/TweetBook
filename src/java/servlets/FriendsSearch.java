@@ -1,23 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
-import beans.FriendshipActivity;
 import beans.Human;
-import com.google.gson.Gson;
 import dao.DAOException;
 import dao.DAOFactory;
 import dao.FriendshipActivityDao;
 import dao.HumanDao;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -54,7 +44,6 @@ public class FriendsSearch extends HttpServlet {
         this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -79,6 +68,7 @@ public class FriendsSearch extends HttpServlet {
                 .collect(Collectors.joining(",", "{\"status\": \"success\", \"results\": [", "]}")));
         } catch (DAOException e) {
             out.println("{\"status\": \"error\", \"message\": \"Une erreur interne s'est produite lors de la recherche d'ami.\"}");
+            log(e.getMessage());
         }
     }
 }

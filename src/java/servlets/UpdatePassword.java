@@ -77,13 +77,14 @@ public class UpdatePassword extends HttpServlet {
                     humanDao.updatePassword(human, BCrypt.hashpw(data.getProperty("newPassword"), BCrypt.gensalt()));
                     out.print("{\"status\": \"success\"}");
                 } else {
-                    out.println("{\"status\": \"error\",\"message\": \"mauvaise combinaison email / mot de passe\"}");
+                    out.println("{\"status\": \"error\",\"message\": \"Mauvaise combinaison email / mot de passe\"}");
                 }
             } else {
                 out.println("{\"status\": \"error\"\n\"message\": \"Veuillez renseigner les mots de passe\"}");
             }
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\": \""+e.getMessage()+"\"}");
+            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la modification du mot de passe\"}");
+            log(e.getMessage());
         }
   }
 }

@@ -104,7 +104,8 @@ public class SignUp extends HttpServlet {
                 out.println(message+"\"}");
             }
         } catch (DAOException e) {
-            out.print("{\"status\": \"error\",\"message\": \"Échec de l'inscription : une erreur imprévue est survenue, merci de réessayer dans quelques instants.\"");
+            out.print("{\"status\": \"error\",\"message\": \"Échec de l'inscription\"");
+            log(e.getMessage());
         }
     }
     

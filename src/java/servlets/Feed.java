@@ -158,7 +158,8 @@ public class Feed extends HttpServlet {
             }
             out.print("]}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du feed.\"}");    
+            out.println("{\"status\": \"error\",\"message\":\"Un problème est survenu lors de la récupération du feed.\"}");
+            log(e.getMessage());
         }
     }
 }

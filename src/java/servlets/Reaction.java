@@ -79,6 +79,7 @@ public class Reaction extends HttpServlet {
                 out.println("{\"status\": \"success\",\n\"id\": \""+reac.getId()+"\"}");
         } catch (DAOException e){
             out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de la réaction au post\"}");
+            log(e.getMessage());
         }
     }
 
@@ -111,6 +112,7 @@ public class Reaction extends HttpServlet {
                 out.println("{\"status\": \"error\",\n\"message\": \"Aucune réaction trouvée.\"}");
         } catch (DAOException e) {
             out.println("{\"status\": \"error\",\n\"message\": \"Erreur lors de l'annulation de la réaction\"}");
+            log(e.getMessage());
         }
     }
 }
