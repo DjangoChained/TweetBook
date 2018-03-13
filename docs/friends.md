@@ -8,7 +8,9 @@ Vous pouvez rechercher des personnes inscrites sur TweetBook pour les ajouter en
 
 ![Résultats de recherche](img/friendssearch.jpg)
 
-À côté de chaque nom de personne, un bouton vous permet d'ajouter la personne recherchée en tant qu'ami(e).
+À côté de chaque nom de personne, un bouton vous permet d'ajouter la personne recherchée en tant qu'ami(e). Quand vous ajoutez quelqu'un en tant qu'ami, une publication est effectuée sur [votre mur](feeds.md).
+
+![Notification d'ajout en ami](img/friendshipactivity.jpg)
 
 ## Liste d'amis
 
