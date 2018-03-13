@@ -108,13 +108,18 @@ public class Friends extends HttpServlet {
                 int id_friend = Integer.parseInt(data.getProperty("id_friend"));
                 if(friendshipDao.getByFriends(human.getId(), id_friend) > 0)
                     throw new DAOException("Cette relation d'amitié existe déjà.");
-                FriendshipActivity act = new FriendshipActivity();
-                act.setDate(LocalDateTime.now());
-                act.setId_human(human.getId());
-                act.setId_second_human(id_friend);
-                friendshipDao.create(act);
+                FriendshipActivity act1 = new FriendshipActivity();
+                FriendshipActivity act2 = new FriendshipActivity();
+                act1.setDate(LocalDateTime.now());
+                act2.setDate(LocalDateTime.now());
+                act1.setId_human(human.getId());
+                act1.setId_second_human(id_friend);
+                friendshipDao.create(act1);
+                act2.setId_human(id_friend);
+                act2.setId_second_human(human.getId());
+                friendshipDao.create(act2);
 
-                out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\"}");
+                out.println("{\"status\": \"success\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de la relation d'ami\"}");
                 log(e.getMessage());

@@ -7,7 +7,6 @@ import dao.FriendshipActivityDao;
 import dao.HumanDao;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -57,9 +56,7 @@ public class FriendsSearch extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             String query = request.getParameter("q").toLowerCase();
-            ArrayList<Human> humans = humanDao.getAll();
-            humans.removeAll(friendshipDao.getByHuman(human.getId()));
-            out.println(humans.stream()
+            out.println(humanDao.getAll().stream()
                 .filter(h -> h.getId() != human.getId() && (h.getFirstName() + " " + h.getLastName()).toLowerCase().contains(query))
                 .map(h -> "{\"id\": \"" + h.getId() + "\", \"name\": \"" + h.getFirstName() + " " + h.getLastName() + "\"}")
                 .collect(Collectors.joining(",", "{\"status\": \"success\", \"results\": [", "]}")));
