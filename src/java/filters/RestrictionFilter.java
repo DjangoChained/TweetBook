@@ -7,26 +7,30 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebFilter(servletNames = {"getHuman", "getPost", "Logout", "Settings", "FriendsSearch", "Friends", "UpdatePassword", "Wall", "Reaction", "Feed"})
+/**
+ * Le filtre qui permet de restreindre l'accès à certaines pages aux utilisateurs connectés
+ */
 public class RestrictionFilter implements Filter {
-    public static final String ATT_SESSION_USER = "sessionHuman";
 
+    /**
+     * Autorise l'accès aux utilisateurs connectés et renvoie une erreur HTTP 403 aux autres
+     * @param req la requête HTTP
+     * @param resp la réponse HTTP
+     * @param chain la chaîne de filtres
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter( ServletRequest req, ServletResponse resp, FilterChain chain ) throws IOException,
             ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
-        
-        if(request.getHeader("X-Session") != null)
-            request = new HeaderChangerServletWrapper(request, "Cookie", "JSESSIONID="+request.getHeader("X-Session")+"; httpOnly");
-
         HttpSession session = request.getSession(false);
-        boolean loggedIn = session != null && session.getAttribute(ATT_SESSION_USER) != null;
+        boolean loggedIn = session != null && session.getAttribute("sessionHuman") != null;
         if (loggedIn) {
             chain.doFilter( request, response );
         } else {

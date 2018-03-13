@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.FriendshipActivity;
@@ -26,40 +21,53 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author pierant
+ *
  */
 @WebServlet(name = "Friends", urlPatterns = {"/friends"})
 public class Friends extends HttpServlet {
-    
-    public static final String ATT_SESSION_USER = "sessionHuman";
-    public static final String CONF_DAO_FACTORY = "daofactory";
+    /**
+     * Dao permettant de manipuler les liens d'amitié
+     */
     private FriendshipActivityDao friendshipDao;
+    /**
+     * Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
     
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Permet de récupérer les identifiants, noms et prénoms des amis de l'utilisateur connecté au format Json
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
         ArrayList<Human> friends = humanDao.getFriends(friendshipDao.getFriends(human.getId()));
+        for (int a : friendshipDao.getFriends(human.getId())){
+            log ("id ami dans boucle int: "+a);
+        }
+        for (Human a : friends){
+            log("username :" +a.getUsername());
+        }
+        
         
         ArrayList<String> res = new ArrayList<>();
             
@@ -74,7 +82,14 @@ public class Friends extends HttpServlet {
         out.print("]}");
 }
 
-
+    /**
+     * Permet d'ajouter un ami.
+     * Reçois au format JSON l'identifiant de l'utilisateur à ajouter en ami ("id_friend")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -85,23 +100,35 @@ public class Friends extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
         try {
+                int id_friend = Integer.parseInt(data.getProperty("id_friend"));
+                if(friendshipDao.getByFriends(human.getId(), id_friend) > 0)
+                    throw new DAOException("Cette relation d'amitié existe déjà.");
                 FriendshipActivity act = new FriendshipActivity();
                 act.setDate(LocalDateTime.now());
                 act.setId_human(human.getId());
-                act.setId_second_human(Integer.parseInt(data.getProperty("id_friend")));
+                act.setId_second_human(id_friend);
                 friendshipDao.create(act);
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\"}");
             } catch (DAOException e){
                 out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la création de la relation d'ami\"}");
+                log(e.getMessage());
             }
     }
     
+    /**
+     * Permet de retirer un utilisateur de sa liste d'amis.
+     * Reçois au format JSON l'identifiant de l'utilisateur à retirer des amis ("id_friend")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -113,7 +140,7 @@ public class Friends extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
@@ -128,7 +155,8 @@ public class Friends extends HttpServlet {
         } catch (NullPointerException e) {
             out.println("{\"status\": \"error\",\"message\": \"Aucune relation d'amitié à supprimer.\"}");
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la suppression de l'amitié. "+e.getMessage()+"\"}");
+            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la suppression de l'amitié.\"}");
+            log(e.getMessage());
             throw e;
         }
     }

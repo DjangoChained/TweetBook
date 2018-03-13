@@ -14,12 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- * @author pierant
+ * Servlet qui permet de déconnecter un utilisateur existant
  */
 @WebServlet(name = "Logout", urlPatterns = {"/user/logout"})
 public class Logout extends HttpServlet {
 
+    /**
+     * Il suffit d'acceder à /user/logout pour se déconnecter
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         /* Récupération et destruction de la session en cours */

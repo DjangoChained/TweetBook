@@ -17,65 +17,61 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author pierant
+ * Servlet qui permet de récupérer un utilisateur
  */
 @WebServlet(name = "getHuman", urlPatterns = {"/user"})
 public class GetHuman extends HttpServlet {
-
-    public static final String CONF_DAO_FACTORY = "daofactory";
-    
+    /**
+     * Le Dao qui permet de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
     
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * permet de récupérer un utilisateur par son identifiant
+     * Reçois au format JSON l'identifiant de l'utilisateur qu'on souhaite récupérer ("id")
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
 
-        try (PrintWriter out = response.getWriter()) {
-            int humanId = -1;
-            
-            try {
-               humanId = Integer.parseInt(request.getParameter("id"));
-            } catch(NumberFormatException e){
-                out.println("{\n" +
-"    \"status\": \"error\",\n" +
-"    \"message\": \"Veuillez entrer un entier valide\"\n" +
-"}");
-            }
-            
-            if (humanId != -1){
-                Human human = humanDao.get(humanId);
-                if(human != null){
-                    out.println("{\n" +
-                                "    \"status\": \"success\",\n" +
-                                "    \"user\": {\n" +
-                            "        \"id\": \""+human.getId()+"\",\n" +
-                            "        \"firstName\": \""+human.getFirstName()+"\",\n" +
-                            "        \"lastName\": \""+human.getLastName()+"\"\n" +
-                            "    }\n" +
-                            "}");
-                } else {
-                out.println("{\n" +
-"    \"status\": \"error\",\n" +
-"    \"message\": \"Il n'existe aucun utilisateur avec cet identifiant\"\n" +
-"}");
-                }
-            } 
+        int humanId = -1;
+        PrintWriter out = response.getWriter();
+
+        try {
+           humanId = Integer.parseInt(request.getParameter("id"));
+        } catch(NumberFormatException e){
+            out.println("{\"status\": \"error\",\"message\": \"Veuillez entrer un entier valide\"}");
+            log(e.getMessage());
         }
+
+        if (humanId != -1){
+            Human human = humanDao.get(humanId);
+            if(human != null){
+                out.println("{" +
+                            "    \"status\": \"success\",\n" +
+                            "    \"user\": {\n" +
+                        "        \"id\": \""+human.getId()+"\",\n" +
+                        "        \"firstName\": \""+human.getFirstName()+"\",\n" +
+                        "        \"lastName\": \""+human.getLastName()+"\"\n" +
+                        "    }" +
+                        "}");
+            } else {
+                out.println("{\"status\": \"error\",\"message\": \"Il n'existe aucun utilisateur avec cet identifiant\"}");
+            }
+        } 
     }
 }

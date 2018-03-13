@@ -1,23 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
-import beans.FriendshipActivity;
 import beans.Human;
-import com.google.gson.Gson;
 import dao.DAOException;
 import dao.DAOFactory;
 import dao.FriendshipActivityDao;
 import dao.HumanDao;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,37 +16,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author pierant
+ * Servlet qui permet de rechercher des utilisateurs
  */
 @WebServlet(name = "FriendsSearch", urlPatterns = {"/friends/search"})
 public class FriendsSearch extends HttpServlet {
     
-    public static final String ATT_SESSION_USER = "sessionHuman";
-    public static final String CONF_DAO_FACTORY = "daofactory";
+    /**
+     * Le Dao qui permet de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
+    /**
+     * Le Dao qui permet de manipuler les liens d'amitié
+     */
     private FriendshipActivityDao friendshipDao;
     
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
-        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getFriendshipActivityDao();
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.friendshipDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getFriendshipActivityDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * Permet de rechercher des utilisateurs à partir d'une chaîne de caractères
+     * Reçois au format JSON une chaîne de caractères de laquelle seront déduit des utilisateurs
+     * dont le nom ou prénom pourraient correspondre
+     * @param request la requête HTTP
+     * @param response la réponse HTTP
+     * @throws ServletException
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         PrintWriter out = response.getWriter();
         try {
             String query = request.getParameter("q").toLowerCase();
@@ -68,6 +65,7 @@ public class FriendsSearch extends HttpServlet {
                 .collect(Collectors.joining(",", "{\"status\": \"success\", \"results\": [", "]}")));
         } catch (DAOException e) {
             out.println("{\"status\": \"error\", \"message\": \"Une erreur interne s'est produite lors de la recherche d'ami.\"}");
+            log(e.getMessage());
         }
     }
 }

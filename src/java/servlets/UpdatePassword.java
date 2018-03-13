@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servlets;
 
 import beans.Human;
@@ -22,21 +17,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author pierant
+ * Servlet qui permet à l'utilisateur de modifier son mot de passe
  */
 @WebServlet(name = "UpdatePassword", urlPatterns = {"/user/password"})
 public class UpdatePassword extends HttpServlet {
     
-    public static final String CONF_DAO_FACTORY = "daofactory";
-    public static final String ATT_SESSION_USER = "sessionHuman";
+    /**
+     * Le Dao permettant de manipuler les utilisateurs
+     */
     private HumanDao humanDao;
     
+    /**
+     * Permet d'initialiser les Dao lors de l'instanciation de la servlet
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
-        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( CONF_DAO_FACTORY ) ).getHumanDao();
+        this.humanDao = ( (DAOFactory) getServletContext().getAttribute( "daofactory" ) ).getHumanDao();
     }
     
+    /**
+     * Permet à un utilisateur de modifier son mot de passe
+     * Reçois au format JSON le mot de passe actuel de l'utilisateur ("currentPassword") et le nouveau ("newPassword")
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
@@ -47,7 +54,7 @@ public class UpdatePassword extends HttpServlet {
 
         Properties data = gson.fromJson(reader, Properties.class);
         
-        Human human = (Human)request.getSession(false).getAttribute(ATT_SESSION_USER);
+        Human human = (Human)request.getSession(false).getAttribute("sessionHuman");
         
         PrintWriter out = response.getWriter();
         
@@ -59,13 +66,14 @@ public class UpdatePassword extends HttpServlet {
                     humanDao.updatePassword(human, BCrypt.hashpw(data.getProperty("newPassword"), BCrypt.gensalt()));
                     out.print("{\"status\": \"success\"}");
                 } else {
-                    out.println("{\"status\": \"error\",\"message\": \"mauvaise combinaison email / mot de passe\"}");
+                    out.println("{\"status\": \"error\",\"message\": \"Mauvaise combinaison email / mot de passe\"}");
                 }
             } else {
                 out.println("{\"status\": \"error\"\n\"message\": \"Veuillez renseigner les mots de passe\"}");
             }
         } catch (DAOException e){
-            out.println("{\"status\": \"error\",\"message\": \""+e.getMessage()+"\"}");
+            out.println("{\"status\": \"error\",\"message\": \"Erreur lors de la modification du mot de passe\"}");
+            log(e.getMessage());
         }
   }
 }

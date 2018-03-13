@@ -5,31 +5,41 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.servlet.ServletContext;
 
+/**
+ * Classe permettant d'instancier les Dao
+ */
 public class DAOFactory {
 
-    private static final String PROPERTY_URL      = "jdbc-url";
-    private static final String PROPERTY_DRIVER   = "jdbc-driver";
-    private static final String PROPERTY_USERNAME = "jdbc-username";
-    private static final String PROPERTY_PASSWORD = "jdbc-password";
-
+    /**
+     * L'url, le nom d'utilisateur et le mot de passe permettant de se connecter à la base de données
+     */
     private final String url, username, password;
 
+    /**
+     * Constructeur de la DaoFactory
+     * @param url url permmettant de se connecter à la base de données
+     * @param username nom d'utilisateur permmettant de se connecter à la base de données
+     * @param password mot de passe permmettant de se connecter à la base de données
+     */
     DAOFactory( String url, String username, String password ) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
-    /*
+    /**
      * Méthode chargée de récupérer les informations de connexion à la base de
      * données, charger le driver JDBC et retourner une instance de la Factory
+     * @param context le contexte de l'application web
+     * @return une instance de la DAOFactory
+     * @throws DAOConfigurationException 
      */
     public static DAOFactory getInstance(ServletContext context) throws DAOConfigurationException {
         String url, driver, username, password;
-        url = context.getInitParameter( PROPERTY_URL );
-        driver = context.getInitParameter( PROPERTY_DRIVER );
-        username = context.getInitParameter( PROPERTY_USERNAME );
-        password = context.getInitParameter(PROPERTY_PASSWORD );
+        url = context.getInitParameter("jdbc-url");
+        driver = context.getInitParameter("jdbc-driver");
+        username = context.getInitParameter("jdbc-username");
+        password = context.getInitParameter("jdbc-password");
 
         try {
             Class.forName( driver );
@@ -41,40 +51,60 @@ public class DAOFactory {
         return instance;
     }
 
-    /* Méthode chargée de fournir une connexion à la base de données */
-     /* package */ Connection getConnection() throws SQLException {
+    /**
+     * Méthode chargée de fournir une connexion à la base de données 
+     * @return la connexion à la base de données
+     * @throws SQLException lorsque qu'une erreur SQL est survenue
+     */
+    Connection getConnection() throws SQLException {
         return DriverManager.getConnection( url, username, password );
     }
-
-    /*
-     * Méthodes de récupération de l'implémentation des différents DAO (un seul
-     * pour le moment)
+    
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les utilisateurs
+     * @return Dao gérant les utilisateurs
      */
     public HumanDao getHumanDao() {
-        return new HumanDaoImpl(this);
+        return new HumanDao(this);
     }
-    
+
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant du texte
+     * @return Dao gérant les post contenant du texte
+     */
     public TextPostDao getTextPostDao() {
-        return new TextPostDaoImpl(this);
+        return new TextPostDao(this);
     }
-    
+
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant un lien
+     * @return Dao gérant les post contenant un lien
+     */
     public LinkPostDao getLinkPostDao() {
-        return new LinkPostDaoImpl(this);
+        return new LinkPostDao(this);
     }
-    
+
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les post contenant une photo
+     * @return Dao gérant les post contenant une photo
+     */
     public PhotoPostDao getPhotoPostDao() {
-        return new PhotoPostDaoImpl(this);
+        return new PhotoPostDao(this);
     }
-    
+
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les amis
+     * @return Dao gérant les amis
+     */
     public FriendshipActivityDao getFriendshipActivityDao() {
-        return new FriendshipActivityDaoImpl(this);
+        return new FriendshipActivityDao(this);
     }
-    
-    public LikeActivityDao getLikeActivityDao() {
-        return new LikeActivityDaoImpl(this);
-    }
-    
-    public DislikeActivityDao getDislikeActivityDao() {
-        return new DislikeActivityDaoImpl(this);
+
+    /**
+     * Méthode de récupération de l'implémentation du Dao gérant les réactions à des posts
+     * @return Dao gérant les réactions à des posts
+     */
+    public ReactionActivityDao getReactionActivityDao() {
+        return new ReactionActivityDao(this);
     }
 }
