@@ -13,4 +13,3 @@ Bienvenue sur la documentation utilisateur de l'application TweetBook.
 * [Trouver et gérer les amis](friends.md)
 * [Configuration du compte](settings.md)
 * [Modification du mot de passe](password.md)
-* [Messages d'erreur](errors.md)
