@@ -261,7 +261,7 @@ public class FriendshipActivityDao extends BasicDao {
      * récupérer l'identifiant en base du lien d'amitié entre deux utilisateurs
      * @param id_human identifiant en base du premier utilisateur
      * @param id_friend identifiante en base du second utilisateur
-     * @return l'identifiant en base du lien d'amitié ou null
+     * @return l'identifiant en base du lien d'amitié ou un nombre négatif
      * @throws DAOException lorsqu'une erreur est survenue dans le Dao
      */
     public int getByFriends(int id_human, int id_friend) throws DAOException {

@@ -105,10 +105,13 @@ public class Friends extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
+                int id_friend = Integer.parseInt(data.getProperty("id_friend"));
+                if(friendshipDao.getByFriends(human.getId(), id_friend) > 0)
+                    throw new DAOException("Cette relation d'amitié existe déjà.");
                 FriendshipActivity act = new FriendshipActivity();
                 act.setDate(LocalDateTime.now());
                 act.setId_human(human.getId());
-                act.setId_second_human(Integer.parseInt(data.getProperty("id_friend")));
+                act.setId_second_human(id_friend);
                 friendshipDao.create(act);
 
                 out.println("{\"status\": \"success\",\n\"id\": \""+act.getId()+"\"}");
