@@ -93,7 +93,7 @@ public class GetPost extends HttpServlet {
                 out.println(linkpost.getJson()+
                 "    \"type\": \"link\",\n" +
                 "    \"url\": \"/"+linkpost.getUrl()+"\",\n" +
-                "    \"title\": \"/"+linkpost.getTitle()+"\"\n" +
+                "    \"title\": \"/"+linkpost.getTitle().replaceAll("\n", "\\n")+"\"\n" +
                 "    \"authorname\": \"" + human.getFirstName() + " " + human.getLastName() + "\"}}");
             } else {
                 out.println("{\"status\": \"error\",\"message\": \"Il n'existe aucun post avec cet id\"}");

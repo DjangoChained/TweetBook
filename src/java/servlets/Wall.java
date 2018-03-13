@@ -139,7 +139,7 @@ public class Wall extends HttpServlet {
                             "   \"id\": \""+post.getId()+"\", " +
                             "   \"date\": \""+post.getDate()+"\", " +
                             "   \"id_human\": \""+post.getId_human()+"\", " +
-                            "   \"content\": \""+post.getContent()+"\", " +
+                            "   \"content\": \""+post.getContent().replaceAll("\n", "\\n")+"\", " +
                             "   \"authorname\": \""+getHumanName(post.getId_human())+"\" " +
                             "}");
             }
@@ -151,7 +151,7 @@ public class Wall extends HttpServlet {
                             "   \"id_human\": \""+post.getId_human()+"\", " +
                             "   \"url\": \""+post.getUrl()+"\", " +
                             "   \"title\": \""+post.getTitle()+"\", " +
-                            "   \"content\": \""+post.getContent()+"\", " +
+                            "   \"content\": \""+post.getContent().replaceAll("\n", "\\n")+"\", " +
                             "   \"authorname\": \""+getHumanName(post.getId_human())+"\" " +
                             "}");
             }

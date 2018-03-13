@@ -46,6 +46,6 @@ public abstract class Post extends Activity {
                 "    \"id\": \""+this.getId()+"\",\n" +
                 "    \"authorid\": \""+this.getId_human()+"\",\n" +
                 "    \"date\": \""+this.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\",\n" +
-                "    \"content\": \""+this.getContent()+"\",\n";
+                "    \"content\": \""+this.getContent().replaceAll("\n", "\\n")+"\",\n";
     }
 }

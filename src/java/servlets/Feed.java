@@ -142,7 +142,7 @@ public class Feed extends HttpServlet {
                             "\"id\": \""+textPost.getValue().getId()+"\", " +
                             "\"date\": \""+textPost.getValue().getDate()+"\", " +
                             "\"id_human\": \""+textPost.getValue().getId_human()+"\", " +
-                            "\"content\": \""+textPost.getValue().getContent()+"\", " +
+                            "\"content\": \""+textPost.getValue().getContent().replaceAll("\n", "\\n")+"\", " +
                             "\"authorname\": \""+getHumanName(textPost.getValue().getId_human())+"\"}");
             }
             for(Map.Entry<Integer, LinkPost> linkPost : linkPosts.entrySet()) {
@@ -151,8 +151,8 @@ public class Feed extends HttpServlet {
                             "\"date\": \""+linkPost.getValue().getDate()+"\", " +
                             "\"id_human\": \""+linkPost.getValue().getId_human()+"\", " +
                             "\"url\": \""+linkPost.getValue().getUrl()+"\", " +
-                            "\"title\": \""+linkPost.getValue().getTitle()+"\", " +
-                            "\"content\": \""+linkPost.getValue().getContent()+"\", " +
+                            "\"title\": \""+linkPost.getValue().getTitle().replaceAll("\n", "\\n")+"\", " +
+                            "\"content\": \""+linkPost.getValue().getContent().replaceAll("\n", "\\n")+"\", " +
                             "\"authorname\": \""+getHumanName(linkPost.getValue().getId_human())+"\"}");
             }
             for(Map.Entry<Integer, FriendshipActivity> friend : friends.entrySet()) {
