@@ -105,6 +105,7 @@ public class Login extends HttpServlet {
             out.print("{\"status\": \"error\",\"message\": \"");
             String message = errors.entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
             out.println(message+"\"}");
+            errors.clear();
         }         
     }
 }

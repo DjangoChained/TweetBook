@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpSession;
 import config.ConnectionTools;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Servlet qui permet à un utilisateur de s'inscrire
@@ -103,6 +105,7 @@ public class SignUp extends HttpServlet {
                 out.print("{\"status\": \"error\",\"message\": \"");
                 String message = errors.entrySet().stream().map((entry) -> entry.getValue()).collect(Collectors.joining(" - "));
                 out.println(message+"\"}");
+                errors.clear();
             }
         } catch (DAOException e) {
             out.print("{\"status\": \"error\",\"message\": \"Échec de l'inscription\"");
@@ -132,11 +135,15 @@ public class SignUp extends HttpServlet {
     private void birthdateValidation(String date) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setLenient(false);
+        Date d;
         try {
-            Date d = sdf.parse(date);
+            d = sdf.parse(date);
         } catch (ParseException e){
             throw new Exception("La date doit être au format yyyy-MM-dd");
         }
+        if(d.after(new Date())) throw new Exception("Vous ne pouvez pas naître dans le futur.");
+        if(TimeUnit.DAYS.convert(Math.abs(new Date().getTime() - d.getTime()), TimeUnit.MILLISECONDS) < 365 * 13)
+            throw new Exception("Vous devez être âgé de plus 13 ans pour vous inscrire à TweetBook.");
     }
     
     /**
